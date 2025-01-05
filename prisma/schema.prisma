@@ -12,3 +12,98 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  nim       String   @unique @db.VarChar(10)
+  username  String?  @unique @db.VarChar(10)
+  password  String   @db.VarChar(255)
+  role      String   @default("user") @db.VarChar(10)
+  updatedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  profile  Profile?
+  events   Event[]
+  threads  Thread[]
+  comments Comment[]
+  photos   Photo[]
+
+  @@map("users")
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  userId    String   @unique @db.VarChar(25)
+  fullname  String   @db.VarChar(30)
+  image     String?  @db.VarChar(255)
+  birthdate String?  @db.VarChar(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("profiles")
+}
+
+model Event {
+  id          String   @id @default(cuid()) @db.VarChar(25)
+  title       String   @db.VarChar(30)
+  description String   @db.LongText()
+  date        String   @db.VarChar(10)
+  image       String?  @db.VarChar(255)
+  userId      String   @db.VarChar(25)
+  location    String?  @db.VarChar(100)
+  locationUrl String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  creator User     @relation(fields: [userId], references: [id])
+  threads Thread[]
+
+  @@map("events")
+}
+
+model Thread {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  title     String   @db.VarChar(30)
+  content   String   @db.LongText()
+  image     String?  @db.VarChar(255)
+  userId    String   @db.VarChar(25)
+  eventId   String?  @db.VarChar(25)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id])
+  event    Event?    @relation(fields: [eventId], references: [id])
+  comments Comment[]
+
+  @@map("threads")
+}
+
+model Comment {
+  id        String   @id @default(cuid()) @db.VarChar(25)
+  content   String   @db.LongText()
+  userId    String   @db.VarChar(25)
+  threadId  String   @db.VarChar(25)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  thread Thread @relation(fields: [threadId], references: [id])
+
+  @@map("comments")
+}
+
+model Photo {
+  id          String   @id @default(cuid()) @db.VarChar(25)
+  path        String   @db.VarChar(255)
+  title       String?  @db.VarChar(30)
+  description String?  @db.LongText()
+  userId      String   @db.VarChar(25)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("photos")
+}
