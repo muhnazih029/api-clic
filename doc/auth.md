@@ -21,8 +21,8 @@ Response Body (Success, 201) :
 {
   "message": "created",
   "data": {
-    "at": "JWT token",
-    "rt": "JWT token"
+    "at": "JWT token 15 menit",
+    "rt": "JWT token 7 hari"
   }
 }
 ```
@@ -65,8 +65,8 @@ Response Body (Success, 200) :
 {
   "message": "OK",
   "data": {
-    "at": "JWT token",
-    "rt": "JWT token"
+    "at": "JWT token 15 menit",
+    "rt": "JWT token 7 hari"
   }
 }
 ```
@@ -112,8 +112,8 @@ Response Body (Success, 200) :
 {
   "message": "OK",
   "data": {
-    "at": "JWT token",
-    "rt": "JWT token"
+    "at": "JWT token 15 menit",
+    "rt": "JWT token 7 hari"
   }
 }
 ```
