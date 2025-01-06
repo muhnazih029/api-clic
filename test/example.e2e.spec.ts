@@ -1,4 +1,4 @@
-import { logger } from 'src/providers/logger.provider';
+import { logger } from 'src/providers';
 import { beforeAll, describe, expect, it } from 'bun:test';
 import app from 'src';
 
