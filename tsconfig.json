@@ -1,14 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "paths": {
-      "@Controllers/*": ["src/controllers/*"],
-      "@Models/*": ["src/models/*"],
-      "@Routes/*": ["src/routes/*"],
-      "@Services/*": ["src/services/*"],
-      "@Validation/*": ["src/validation/*"],
-      "@Common/*": ["src/common/*"]
-    },
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
