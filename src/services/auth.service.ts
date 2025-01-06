@@ -34,26 +34,27 @@ export class AuthService {
       data,
     );
 
-    let user = await this.userRepository.findFirst({
+    const userByNim = await this.userRepository.findFirst({
       where: {
         nim: validatedData.nim,
       },
     });
 
-    user = await this.userRepository.findFirst({
+    const userByUsername = await this.userRepository.findFirst({
       where: {
         username: validatedData.username,
       },
     });
 
-    if (user)
+    if (userByNim || userByUsername) {
       throw new HTTPException(400, {
-        message: 'The credential is  already registered',
+        message: 'The credential is already registered',
       });
+    }
 
     validatedData.password = await this.hash(validatedData.password);
 
-    user = await this.userRepository.create({
+    const user = await this.userRepository.create({
       data: {
         nim: validatedData.nim,
         username: validatedData.username,

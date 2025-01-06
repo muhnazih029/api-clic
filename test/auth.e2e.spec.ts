@@ -110,7 +110,7 @@ describe('AuthController (e2e)', () => {
 
       expect(res.status).toBe(400);
       expect(body).toBeDefined();
-      expect(body.message).toBe('The credential is  already registered');
+      expect(body.message).toBe('The credential is already registered');
       expect(body.errors).toBe(true);
     });
 
@@ -133,7 +133,7 @@ describe('AuthController (e2e)', () => {
 
       expect(res.status).toBe(400);
       expect(body).toBeDefined();
-      expect(body.message).toBe('The credential is  already registered');
+      expect(body.message).toBe('The credential is already registered');
       expect(body.errors).toBe(true);
     });
   });
