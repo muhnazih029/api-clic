@@ -24,6 +24,7 @@ export class AuthService {
     this.profileRepository = prisma.profile;
     this.validationService = validationService;
     this.logger = logger;
+    this.logger.setLocation('auth.service');
   }
 
   async register(data: RegisterRequest): Promise<WebResponse<SuccessResponse>> {

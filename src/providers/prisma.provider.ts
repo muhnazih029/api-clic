@@ -1,11 +1,11 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { logger } from './logger.provider';
+import { logger, LoggerProvider } from './logger.provider';
 
 export class PrismaProvider extends PrismaClient<
   Prisma.PrismaClientOptions,
   string
 > {
-  private logger = logger;
+  private logger: LoggerProvider;
   constructor() {
     super({
       log: [
@@ -27,6 +27,8 @@ export class PrismaProvider extends PrismaClient<
         },
       ],
     });
+    this.logger = logger;
+    this.logger.setLocation('prisma.provider');
     this.$on('info', (e) => {
       this.logger.info('prisma info', e);
     });

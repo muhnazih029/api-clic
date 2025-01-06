@@ -1,8 +1,11 @@
 import { logger } from 'src/providers/logger.provider';
-import { describe, expect, it } from 'bun:test';
+import { beforeAll, describe, expect, it } from 'bun:test';
 import app from 'src';
 
 describe('example', () => {
+  beforeAll(async () => {
+    logger.setLocation('example.e2e.spec');
+  });
   it('should pass', () => {
     logger.info('test');
     expect(1 + 1).toBe(2);

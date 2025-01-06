@@ -2,6 +2,7 @@ import { logger } from 'src/providers/logger.provider';
 import {
   afterAll,
   afterEach,
+  beforeAll,
   beforeEach,
   describe,
   expect,
@@ -11,6 +12,9 @@ import app from 'src';
 import { TestService } from './test.service';
 
 describe('AuthController (e2e)', () => {
+  beforeAll(async () => {
+    logger.setLocation('auth.e2e.spec');
+  });
   afterAll(async () => {
     await TestService.deleteAll();
   });
