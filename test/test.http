@@ -1,0 +1,17 @@
+# EXAMPLE
+GET http://localhost:3000
+
+
+# REGISTER
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nim": "12345",
+  "password": "test",
+  "username": "test",
+  "fullname": "test",
+  "password": "test"
+}
+
