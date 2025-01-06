@@ -35,11 +35,13 @@ export class AuthService {
       },
     });
 
-    const userByUsername = await this.userRepository.findFirst({
-      where: {
-        username: validatedData.username,
-      },
-    });
+    const userByUsername =
+      validatedData.username &&
+      (await this.userRepository.findFirst({
+        where: {
+          username: validatedData.username,
+        },
+      }));
 
     if (userByNim || userByUsername) {
       throw new HTTPException(400, {
@@ -52,7 +54,7 @@ export class AuthService {
     const user = await this.userRepository.create({
       data: {
         nim: validatedData.nim,
-        username: validatedData.username,
+        username: validatedData.username ?? null,
         password: validatedData.password,
       },
     });
@@ -64,10 +66,13 @@ export class AuthService {
       },
     });
 
+    const role = user.role.toLowerCase() as 'admin' | 'user';
+
     const payload: TPayload = {
       id: user.id,
       nim: user.nim,
       fullname: profile.fullname,
+      role,
     };
 
     const at = this.signJWT(payload, ENV.secret.AT, '15m');
