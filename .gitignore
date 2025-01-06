@@ -14,8 +14,6 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-docker-compose.yml
-prisma/
 
 # Tests
 /coverage
