@@ -19,22 +19,20 @@ Response Body (Success, 201) :
 
 ```json
 {
-  "status": "created",
+  "message": "created",
   "data": {
-    "id": "cuid",
-    "username": "blly // optional",
-    "fullname": "Ahmad Hamid Balya",
-    "nim": "5312623762"
+    "at": "JWT token",
+    "rt": "JWT token"
   }
 }
 ```
 
-Response Body (Not Unique Failed, 400) :
+Response Body (Exist Failed, 400) :
 
 ```json
 {
-  "status": "unique error",
-  "errors": "Username already registered"
+  "errors": true,
+  "message": "The credential is  already registered"
 }
 ```
 
@@ -42,9 +40,9 @@ Response Body (Validation Failed, 400) :
 
 ```json
 {
-  "status": "validation error",
-  "errors": "Validation failed",
-  "data": zodError
+  "errors": true,
+  "message": "Validation error",
+  "data": [zodError]
 }
 ```
 
@@ -56,7 +54,7 @@ Request Body :
 
 ```json
 {
-  "credential": "username or nim",
+  "identifier": "username or nim",
   "password": "rahasia"
 }
 ```
@@ -65,23 +63,11 @@ Response Body (Success, 200) :
 
 ```json
 {
-  "status": "OK",
+  "message": "OK",
   "data": {
-    "id": "cuid",
-    "username": "blly // optional",
-    "fullname": "Ahmad Hamid Balya",
-    "nim": "5312623762",
-    "token": "JWT token"
+    "at": "JWT token",
+    "rt": "JWT token"
   }
-}
-```
-
-Response Body (Process Failed, 400) :
-
-```json
-{
-  "status": "process error",
-  "errors": "credential or password wrong"
 }
 ```
 
@@ -89,8 +75,78 @@ Response Body (Validation Failed, 400) :
 
 ```json
 {
-  "status": "validation error",
-  "errors": "Validation failed",
-  "data": zodError
+  "errors": true,
+  "message": "Validation error",
+  "data": "Your request is invalid"
+}
+```
+
+Response Body (Found Failed, 404) :
+
+```json
+{
+  "errors": true,
+  "message": "The credential is not registered"
+}
+```
+
+Response Body (Match Failed, 400) :
+
+```json
+{
+  "errors": true,
+  "message": "The credential is invalid"
+}
+```
+
+## Refresh User
+
+Endpoint : GET /api/auth/refresh
+
+Headers :
+Authentication : "Bearer rt"
+
+Response Body (Success, 200) :
+
+```json
+{
+  "message": "OK",
+  "data": {
+    "at": "JWT token",
+    "rt": "JWT token"
+  }
+}
+```
+
+Response Body ( Failed, 401) :
+
+```json
+{
+  "errors": true,
+  "message": "The credential is invalid"
+}
+```
+
+## Logout User
+
+Endpoint : DELETE /api/auth
+
+Headers :
+Authentication : "Bearer at"
+
+Response Body (Success, 200) :
+
+```json
+{
+  "message": "OK"
+}
+```
+
+Response Body (Authorization Failed, 401) :
+
+```json
+{
+  "errors": true,
+  "message": "The credential is invalid"
 }
 ```

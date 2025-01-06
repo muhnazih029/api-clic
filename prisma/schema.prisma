@@ -18,6 +18,7 @@ model User {
   nim       String   @unique @db.VarChar(10)
   username  String?  @unique @db.VarChar(10)
   password  String   @db.VarChar(255)
+  refresh   String?  @db.VarChar(255)
   role      String   @default("user") @db.VarChar(10)
   updatedAt DateTime @default(now())
   createdAt DateTime @default(now())
@@ -48,7 +49,7 @@ model Profile {
 model Event {
   id          String   @id @default(cuid()) @db.VarChar(25)
   title       String   @db.VarChar(30)
-  description String   @db.LongText()
+  description String   @db.Text()
   date        String   @db.VarChar(10)
   image       String?  @db.VarChar(255)
   userId      String   @db.VarChar(25)
@@ -66,7 +67,7 @@ model Event {
 model Thread {
   id        String   @id @default(cuid()) @db.VarChar(25)
   title     String   @db.VarChar(30)
-  content   String   @db.LongText()
+  content   String   @db.Text()
   image     String?  @db.VarChar(255)
   userId    String   @db.VarChar(25)
   eventId   String?  @db.VarChar(25)
@@ -82,7 +83,7 @@ model Thread {
 
 model Comment {
   id        String   @id @default(cuid()) @db.VarChar(25)
-  content   String   @db.LongText()
+  content   String   @db.Text()
   userId    String   @db.VarChar(25)
   threadId  String   @db.VarChar(25)
   createdAt DateTime @default(now())
@@ -98,7 +99,7 @@ model Photo {
   id          String   @id @default(cuid()) @db.VarChar(25)
   path        String   @db.VarChar(255)
   title       String?  @db.VarChar(30)
-  description String?  @db.LongText()
+  description String?  @db.Text()
   userId      String   @db.VarChar(25)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
