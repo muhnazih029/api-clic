@@ -139,6 +139,7 @@ Response Body (Success, 200) :
 ```json
 {
   "message": "OK"
+  "data": true
 }
 ```
 
