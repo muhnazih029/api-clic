@@ -1,6 +1,6 @@
 import { createLogger, format, type Logger, transports } from 'winston';
 import { type ConsoleTransportOptions } from 'winston/lib/winston/transports';
-import { env } from 'src/constants';
+import { ENV } from 'src/constants';
 
 // import { environment } from '../../shared/constants';
 
@@ -15,7 +15,7 @@ export class LoggerProvider {
   constructor() {
     const transportOptions: ConsoleTransportOptions = {};
 
-    if (env.ENV === 'development') {
+    if (ENV.NODE_ENV === 'development') {
       transportOptions.format = format.combine(format.prettyPrint());
     } else {
       transportOptions.format = format.combine(

@@ -1,17 +1,11 @@
+import { Prisma, jwt, password, HTTPException } from './libs.import';
 import { logger, LoggerProvider } from 'src/providers';
 import { prisma } from 'src/providers';
-import {
-  // LoginRequest,
-  RegisterRequest,
-  SuccessResponse,
-  WebResponse,
-} from 'src/models';
+import { RegisterRequest, SuccessResponse, WebResponse } from 'src/models';
 import { validationService, ValidationService } from './validation.service';
 import { AuthValidation } from 'src/validations';
-import { payload } from 'src/types';
-import { type Prisma, jwt, password } from './libs';
-import { env } from 'src/constants';
-import { HTTPException } from 'hono/http-exception';
+import { TPayload } from 'src/types';
+import { ENV } from 'src/constants';
 
 export class AuthService {
   private userRepository: Prisma.UserDelegate;
@@ -70,14 +64,14 @@ export class AuthService {
       },
     });
 
-    const payload: payload = {
+    const payload: TPayload = {
       id: user.id,
       nim: user.nim,
       fullname: profile.fullname,
     };
 
-    const at = this.signJWT(payload, env.secret.AT, '15m');
-    const rt = this.signJWT(payload, env.secret.RT, '7 days');
+    const at = this.signJWT(payload, ENV.secret.AT, '15m');
+    const rt = this.signJWT(payload, ENV.secret.RT, '7 days');
 
     await this.userRepository.update({
       where: {
@@ -121,14 +115,14 @@ export class AuthService {
     return password.verify(data, hash);
   }
 
-  signJWT(data: payload, secret: string, expiresIn: string): string {
+  signJWT(data: TPayload, secret: string, expiresIn: string): string {
     return jwt.sign(data, secret, {
       expiresIn,
     });
   }
 
-  verifyJWT(data: string, secret: string): payload {
-    return jwt.verify(data, secret) as payload;
+  verifyJWT(data: string, secret: string): TPayload {
+    return jwt.verify(data, secret) as TPayload;
   }
 }
 

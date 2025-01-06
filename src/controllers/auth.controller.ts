@@ -1,5 +1,7 @@
-import { authService, type AuthService } from 'src/services';
 import { Context } from 'hono';
+import { BlankEnv, BlankInput } from 'hono/types';
+import { TPath } from 'src/constants';
+import { authService, type AuthService } from 'src/services';
 import { RegisterRequest } from 'src/models';
 import { logger, type LoggerProvider } from 'src/providers';
 
@@ -13,7 +15,7 @@ export class AuthController {
     this.logger.setLocation('auth.controller');
   }
 
-  async register(c: Context) {
+  async register(c: Context<BlankEnv, TPath['AUTH']['REGISER'], BlankInput>) {
     const data: RegisterRequest = await c.req.json();
 
     const result = await this.authService.register(data);
