@@ -2,16 +2,18 @@
 
 ## Upload Photo
 
-**Endpoint:** POST /api/photos
-// perlu auth ga? menurutku butuh karena ada relasi sama uploader kalo perlu ada non authorize error ga sih?
+Endpoint: POST /api/photos
+
+**Headers:**
+Authentication: "Bearer rt"
 
 ### Request Body:
 
 ```json
 {
-  "name": "Sunset in Bali", //ini title bukan name
-  "image": "Base64 encoded string" //nice
-  // perlu description ga?
+  "title": "Sunset in Bali",
+  "image": "Base64 encoded string",
+  "description": "this is the description about sunset in Bali"
 }
 ```
 
@@ -19,11 +21,12 @@
 
 ```json
 {
-  "status": "created", //ini message aja
+  "message": "Created",
   "data": {
-    "id": "uuidv6", // cuid ajah
-    "name": "Sunset in Bali", //pakenya title bukan name
-    "url": "https://yourdomain.com/photos/uuidv6", //path bro
+    "id": "cuid",
+    "title": "Sunset in Bali",
+    "path": "base64encodedimage",
+    "description": "this is the description about sunset in Bali",
     "createdAt": "2025-01-06T12:00:00Z"
   }
 }
@@ -33,46 +36,49 @@
 
 ```json
 {
-  "status": "validation error", //ini "Validation error" //ini message aja
-  "errors": "Validation failed", //ini boolean sajah
+  "message": "Validation error",
+  "errors": true,
   "data": {
-    //ini real begini?
-    "name": "Name is required", //title bro//pakenya title bukan name
-    "image": "Image must be a valid Base64 string"
+    "title": "Title is required",
+    "image": "Image must be a valid Base64 string",
+    "description": "Image must have an description"
   }
 }
 ```
 
-### Response Body (Process Failed, 500):
+### Response Body (Upload Error, 500):
 
 ```json
 {
-  "status": "process error", //ini "Upload error" aja ga sih? //ini message aja
-  "errors": "Failed to upload photo" //ini boolean sajah
+  "message": "Upload error",
+  "errors": true
 }
 ```
 
 ## Get All Photos
 
 **Endpoint:** GET /api/photos
-// perlu auth ga? kalo perlu ada non authorize error ga sih?
+
+**Authorization Required:** No
 
 ### Response Body (Success, 200):
 
 ```json
 {
-  "status": "OK", //ini message aja
+  "message": "OK",
   "data": [
     {
-      "id": "uuidv6", // cuid ajah
-      "name": "Sunset in Bali", //pakenya title bukan name
-      "url": "https://yourdomain.com/photos/uuidv6", //path bro
+      "id": "cuid",
+      "title": "Sunset in Bali",
+      "path": "base64encodedimage",
+      "description": "this is the description about sunset in Bali",
       "createdAt": "2025-01-06T12:00:00Z"
     },
     {
-      "id": "uuidv6", // cuid ajah
-      "name": "Mountain View", //pakenya title bukan name
-      "url": "https://yourdomain.com/photos/uuidv6", //path bro
+      "id": "cuid",
+      "title": "Mountain View",
+      "path": "base64encodedimage",
+      "description": "this is the description about Mountain View",
       "createdAt": "2025-01-05T15:30:00Z"
     }
   ]
@@ -82,32 +88,30 @@
 ## Get Photo by ID
 
 **Endpoint:** GET /api/photos/{id}
-// perlu auth ga? kalo perlu ada non authorize error ga sih?
+
+**Authorization Required:** No
 
 ### Response Body (Success, 200):
 
 ```json
 {
-  "status": "OK", //ini message aja
+  "message": "OK",
   "data": {
-    "id": "uuidv6", // cuid ajah
-    "name": "Sunset in Bali", //pakenya title bukan name
-    "url": "https://yourdomain.com/photos/uuidv6", //path bro
+    "id": "cuid",
+    "title": "Sunset in Bali",
+    "path": "base64encodedimage",
+    "description": "this is the description about sunset in Bali",
     "createdAt": "2025-01-06T12:00:00Z"
   }
 }
 ```
 
-    // perlu validation error ga sih buat kalo id nya invalid
-
 ### Response Body (Not Found, 404):
-
-    // perlu auth ga? kalo perlu ada non authorize error ga sih?
 
 ```json
 {
-  "status": "not found", //ini message aja
-  "errors": "Photo not found" //boolean sajah
+  "message": "Not found",
+  "errors": true
 }
 ```
 
@@ -115,26 +119,26 @@
 
 **Endpoint:** DELETE /api/photos/{id}
 
+**Headers:**
+Authentication: "Bearer rt"
+
 ### Response Body (Success, 200):
 
 ```json
 {
-  "status": "deleted", //ini message aja
+  "message": "Deleted",
   "data": {
-    // perlukah mengembalikan data fotonya
-    "id": "uuidv6", // cuid ajah
-    "name": "Sunset in Bali" //pakenya title bukan name
+    "id": "cuid",
+    "title": "Sunset in Bali"
   }
 }
 ```
-
-// perlu validation error ga sih buat kalo id nya invalid
 
 ### Response Body (Not Found, 404):
 
 ```json
 {
-  "status": "not found", //ini message aja
-  "errors": "Photo not found" //boolean sajah
+  "message": "Not found",
+  "errors": true
 }
 ```
