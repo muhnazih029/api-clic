@@ -78,7 +78,7 @@ export class AuthService {
       },
     });
 
-    const [at, rt] = await this.authenticate(user);
+    const { at, rt } = await this.authenticate(user);
 
     return {
       message: 'created',
@@ -114,17 +114,49 @@ export class AuthService {
 
     this.logger.info('USER KDAGJKAGJKG', user);
 
-    const notSuccess = await this.verify(validatedData.password, user.password);
+    const success = await this.verify(validatedData.password, user.password);
 
-    if (!notSuccess) {
-      this.logger.info('notSuccess KDAGJKAGJKG', notSuccess);
+    if (!success) {
+      this.logger.info('success KDAGJKAGJKG', success);
 
       throw new HTTPException(401, {
         message: 'The credential is invalid',
       });
     }
 
-    const [at, rt] = await this.authenticate(user);
+    const { at, rt } = await this.authenticate(user);
+
+    return {
+      message: 'OK',
+      data: {
+        at,
+        rt,
+      },
+    };
+  }
+  async refresh(
+    userId: string,
+    refreshToken: string,
+  ): Promise<WebResponse<SuccessResponse>> {
+    this.logger.setLocation('auth.service.refresh');
+
+    const user = await this.userRepository.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user)
+      throw new HTTPException(401, {
+        message: 'The credential is invalid',
+      });
+
+    const success = await this.verify(refreshToken, user.refresh);
+
+    if (!success)
+      throw new HTTPException(401, { message: 'The credential is invalid' });
+
+    const { at, rt } = await this.authenticate(user);
 
     return {
       message: 'OK',
@@ -135,10 +167,10 @@ export class AuthService {
     };
   }
 
-  async authenticate(user: User): Promise<string[]> {
+  async authenticate(user: User): Promise<Record<string, string>> {
     const role = user.role.toLowerCase() as 'admin' | 'user';
 
-    const payload: TPayload = {
+    const payload = {
       id: user.id,
       nim: user.nim,
       role,
@@ -156,13 +188,8 @@ export class AuthService {
         updatedAt: new Date(),
       },
     });
-    return [at, rt];
+    return { at, rt };
   }
-
-  // refresh(refreshToken: string): WebResponse<SuccessResponse> {
-  //   this.logger.info('refresh');
-  //   return null;
-  // }
 
   // logout(accessToken: string): WebResponse<boolean> {
   //   this.logger.info('logout');

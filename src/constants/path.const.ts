@@ -2,6 +2,7 @@ export const PATH = {
   AUTH: {
     REGISER: '/register',
     LOGIN: '/login',
+    REFRESH: '/refresh',
   },
 } as const;
 

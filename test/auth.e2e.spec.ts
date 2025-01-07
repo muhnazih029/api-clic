@@ -254,4 +254,58 @@ describe('AuthController (e2e)', () => {
       expect(body.errors).toBe(true);
     });
   });
+
+  describe('[AuthRefresh API] GET /api/auth/refresh', () => {
+    beforeEach(async () => {
+      await TestService.deleteUser();
+      await TestService.createUser('nim');
+      await TestService.createUser('username');
+    });
+    afterEach(async () => {});
+
+    it('should be able to refresh token', async () => {
+      const refreshToken = await TestService.getRefreshToken();
+      const headers = new Headers();
+      headers.set('Authorization', `Bearer ${refreshToken}`);
+      const res = await app.request('/api/auth/refresh', {
+        method: 'GET',
+        headers,
+      });
+
+      logger.setLocation('auth.e2e.spec.refresh');
+      logger.info('REFRESH API success refreshtoken', refreshToken);
+      logger.info('REFRESH API success res', res);
+
+      const body = await res.json();
+      logger.info('REFRESH API success body', body);
+
+      expect(res.status).toBe(200);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('OK');
+      expect(body.data).toBeDefined();
+      expect(body.data.at).toBeDefined();
+      expect(body.data.rt).toBeDefined();
+    });
+
+    it('should be rejected if refresh token invalid', async () => {
+      const refreshToken = 'invalid';
+      const headers = new Headers();
+      headers.set('Authorization', `Bearer ${refreshToken}`);
+      const res = await app.request('/api/auth/refresh', {
+        method: 'GET',
+        headers,
+      });
+
+      logger.setLocation('auth.e2e.spec.refresh');
+      logger.info('REFRESH API error res', res);
+
+      const body = await res.json();
+      logger.info('REFRESH API error body', res);
+
+      expect(res.status).toBe(401);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('The credential is invalid');
+      expect(body.errors).toBe(true);
+    });
+  });
 });

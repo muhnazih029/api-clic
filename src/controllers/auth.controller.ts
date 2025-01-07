@@ -2,7 +2,7 @@ import { TPath } from 'src/constants';
 import { authService, type AuthService } from 'src/services';
 import { RegisterRequest } from 'src/models';
 import { logger, type LoggerProvider } from 'src/providers';
-import { TCustomContext } from 'src/types';
+import { TAuthorizeContext, TCustomContext } from 'src/types';
 // import { hideZodErrorDataMiddleware } from 'src/middlewares';
 import { ZodError } from 'zod';
 import { HTTPException } from 'hono/http-exception';
@@ -50,6 +50,19 @@ export class AuthController {
 
       throw err;
     }
+  }
+
+  async refresh(c: TAuthorizeContext<TPath['AUTH']['REFRESH']>) {
+    const { id, token } = c.get('user');
+
+    this.logger.setLocation('auth.controller.refresh');
+    this.logger.info('request', { id, token });
+
+    const result = await this.authService.refresh(id, token);
+
+    this.logger.info('response', result);
+
+    return c.json(result, 200);
   }
 }
 

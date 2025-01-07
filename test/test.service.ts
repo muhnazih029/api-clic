@@ -1,5 +1,8 @@
 import { User } from '@prisma/client';
+import { sign } from 'jsonwebtoken';
+import { ENV } from 'src/constants';
 import { prisma } from 'src/providers';
+import { TPayload } from 'src/types';
 
 export class TestService {
   static async deleteAll() {
@@ -45,8 +48,39 @@ export class TestService {
       data: {
         nim: identifier === 'nim' ? '12345' : '54231',
         username: identifier === 'username' ? 'test' : 'tessss',
-        password: await Bun.password.hash('test', 'bcrypt'),
+        password: await this.hash('test'),
       },
+    });
+  }
+
+  static async getRefreshToken() {
+    const user = await this.getUser();
+
+    const token = this.generateJWT(
+      { id: user.id, nim: user.nim, role: user.role as 'admin' | 'user' },
+      'RT',
+    );
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refresh: await this.hash(token),
+      },
+    });
+
+    return token;
+  }
+  // await this.hash(this.generateJWT({id}, 'RT')),
+
+  static hash(data: string) {
+    return Bun.password.hash(data, 'bcrypt');
+  }
+
+  static generateJWT(data: TPayload, schema: 'AT' | 'RT') {
+    return sign(data, ENV.secret[schema], {
+      expiresIn: schema === 'AT' ? '15m' : '7 days',
     });
   }
 }
