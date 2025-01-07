@@ -3,9 +3,14 @@
 ## Create Event
 
 ### Endpoint:
+
 `POST /api/events`
 
+**Headers:**
+Authentication: "Bearer rt"
+
 ### Request Body:
+
 ```json
 {
   "title": "Event Title",
@@ -18,18 +23,19 @@
 ```
 
 ### Response Body (Success, 201):
+
 ```json
 {
-  "status": "created",
+  "message": "Created",
   "data": {
-    "id": "generatedId",
+    "id": "cuid",
     "title": "Event Title",
     "description": "Description of the event",
     "date": "2025-01-15",
     "image": "https://storage.example.com/images/generatedImageUrl",
     "location": "Event Location",
     "locationUrl": "https://maps.google.com/location",
-    "userId": "creatorUserId",
+    "userId": "cuid of creatorUserId",
     "createdAt": "2025-01-06T10:00:00.000Z",
     "updatedAt": "2025-01-06T10:00:00.000Z"
   }
@@ -37,11 +43,18 @@
 ```
 
 ### Response Body (Validation Failed, 400):
+
 ```json
 {
-  "status": "validation error",
-  "errors": "Validation failed",
-  "data": "zodError"
+  "message": "Validation Error",
+  "errors": true,
+  "data": {
+    "title": "Title is required",
+    "description": "Description of the event is required",
+    "date": "Date is required",
+    "image": "Image must be a valid Base64 string",
+    "location": "Location is required",
+  }
 }
 ```
 
@@ -50,12 +63,14 @@
 ## Get All Events
 
 ### Endpoint:
+
 `GET /api/events`
 
 ### Response Body (Success, 200):
+
 ```json
 {
-  "status": "OK",
+  "message": "OK",
   "data": [
     {
       "id": "cuid1",
@@ -90,12 +105,14 @@
 ## Get Event by ID
 
 ### Endpoint:
+
 `GET /api/events/{id}`
 
 ### Response Body (Success, 200):
+
 ```json
 {
-  "status": "OK",
+  "message": "OK",
   "data": {
     "id": "cuid",
     "title": "Event Title",
@@ -112,10 +129,11 @@
 ```
 
 ### Response Body (Not Found, 404):
+
 ```json
 {
-  "status": "not found",
-  "errors": "Event with the given ID not found"
+  "message": "Not Found",
+  "errors": true
 }
 ```
 
@@ -124,9 +142,14 @@
 ## Update Event
 
 ### Endpoint:
+
 `PUT /api/events/{id}`
 
+**Headers:**
+Authentication: "Bearer rt"
+
 ### Request Body:
+
 ```json
 {
   "title": "Updated Event Title",
@@ -139,9 +162,10 @@
 ```
 
 ### Response Body (Success, 200):
+
 ```json
 {
-  "status": "updated",
+  "message": "Updated",
   "data": {
     "id": "cuid",
     "title": "Updated Event Title",
@@ -158,19 +182,20 @@
 ```
 
 ### Response Body (Validation Failed, 400):
+
 ```json
 {
-  "status": "validation error",
-  "errors": "Validation failed",
-  "data": "zodError"
+  "message": "Validation Error",
+  "errors": true,
 }
 ```
 
 ### Response Body (Not Found, 404):
+
 ```json
 {
-  "status": "not found",
-  "errors": "Event with the given ID not found"
+  "message": "Not Found",
+  "errors": true
 }
 ```
 
@@ -179,19 +204,29 @@
 ## Delete Event
 
 ### Endpoint:
+
 `DELETE /api/events/{id}`
 
+**Headers:**
+Authentication: "Bearer rt"
+
 ### Response Body (Success, 200):
+
 ```json
 {
-  "status": "deleted",
-  "message": "Event successfully deleted"
+  "message": "Deleted",
+  "data": {
+    "id": "cuid",
+    "title": "Deleted Event Title",
+  }
 }
 ```
 
 ### Response Body (Not Found, 404):
+
 ```json
 {
-  "status": "not found",
-  "errors": "Event with the given ID not found"
+  "message": "not found",
+  "errors": true
 }
+```
