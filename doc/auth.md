@@ -90,7 +90,7 @@ Response Body (Found Failed, 404) :
 }
 ```
 
-Response Body (Match Failed, 400) :
+Response Body (Match Failed, 401) :
 
 ```json
 {

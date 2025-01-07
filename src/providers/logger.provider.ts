@@ -13,7 +13,9 @@ export class LoggerProvider {
   }
 
   constructor() {
-    const transportOptions: ConsoleTransportOptions = {};
+    const transportOptions: ConsoleTransportOptions = {
+      level: 'debug',
+    };
 
     if (ENV.NODE_ENV === 'development') {
       transportOptions.format = format.combine(format.prettyPrint());

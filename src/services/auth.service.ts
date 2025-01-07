@@ -1,7 +1,12 @@
-import { Prisma, jwt, password, HTTPException } from './libs.import';
+import { Prisma, jwt, password, HTTPException, User } from './libs.import';
 import { logger, LoggerProvider } from 'src/providers';
 import { prisma } from 'src/providers';
-import { RegisterRequest, SuccessResponse, WebResponse } from 'src/models';
+import {
+  LoginRequest,
+  RegisterRequest,
+  SuccessResponse,
+  WebResponse,
+} from 'src/models';
 import { validationService, ValidationService } from './validation.service';
 import { AuthValidation } from 'src/validations';
 import { TPayload } from 'src/types';
@@ -22,16 +27,20 @@ export class AuthService {
   }
 
   async register(data: RegisterRequest): Promise<WebResponse<SuccessResponse>> {
-    this.logger.info('register');
-
     const validatedData = this.validationService.validate<RegisterRequest>(
       AuthValidation.REGISTER,
       data,
     );
 
+    this.logger.setLocation('auth.service.register');
+    this.logger.info('validatedData', validatedData);
+
     const userByNim = await this.userRepository.findFirst({
       where: {
         nim: validatedData.nim,
+      },
+      select: {
+        id: true,
       },
     });
 
@@ -40,6 +49,9 @@ export class AuthService {
       (await this.userRepository.findFirst({
         where: {
           username: validatedData.username,
+        },
+        select: {
+          id: true,
         },
       }));
 
@@ -59,19 +71,76 @@ export class AuthService {
       },
     });
 
-    const profile = await this.profileRepository.create({
+    await this.profileRepository.create({
       data: {
         userId: user.id,
         fullname: validatedData.fullname,
       },
     });
 
+    const [at, rt] = await this.authenticate(user);
+
+    return {
+      message: 'created',
+      data: {
+        at,
+        rt,
+      },
+    };
+  }
+
+  async login(data: LoginRequest): Promise<WebResponse<SuccessResponse>> {
+    const validatedData = this.validationService.validate<LoginRequest>(
+      AuthValidation.LOGIN,
+      data,
+    );
+
+    this.logger.setLocation('auth.service.login');
+    this.logger.info('validatedData', validatedData);
+
+    const user = await this.userRepository.findFirst({
+      where: {
+        OR: [
+          { nim: validatedData.identifier },
+          { username: validatedData.identifier },
+        ],
+      },
+    });
+
+    if (!user)
+      throw new HTTPException(404, {
+        message: 'The credential is not registered',
+      });
+
+    this.logger.info('USER KDAGJKAGJKG', user);
+
+    const notSuccess = await this.verify(validatedData.password, user.password);
+
+    if (!notSuccess) {
+      this.logger.info('notSuccess KDAGJKAGJKG', notSuccess);
+
+      throw new HTTPException(401, {
+        message: 'The credential is invalid',
+      });
+    }
+
+    const [at, rt] = await this.authenticate(user);
+
+    return {
+      message: 'OK',
+      data: {
+        at,
+        rt,
+      },
+    };
+  }
+
+  async authenticate(user: User): Promise<string[]> {
     const role = user.role.toLowerCase() as 'admin' | 'user';
 
     const payload: TPayload = {
       id: user.id,
       nim: user.nim,
-      fullname: profile.fullname,
       role,
     };
 
@@ -87,20 +156,8 @@ export class AuthService {
         updatedAt: new Date(),
       },
     });
-
-    return {
-      message: 'created',
-      data: {
-        at,
-        rt,
-      },
-    };
+    return [at, rt];
   }
-
-  // login(data: LoginRequest): WebResponse<SuccessResponse> {
-  //   this.logger.info('login');
-  //   return null;
-  // }
 
   // refresh(refreshToken: string): WebResponse<SuccessResponse> {
   //   this.logger.info('refresh');
@@ -117,7 +174,7 @@ export class AuthService {
   }
 
   verify(data: string, hash: string): Promise<boolean> {
-    return password.verify(data, hash);
+    return password.verify(data, hash, 'bcrypt');
   }
 
   signJWT(data: TPayload, secret: string, expiresIn: string): string {

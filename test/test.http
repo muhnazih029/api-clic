@@ -1,17 +1,28 @@
-# EXAMPLE
+### EXAMPLE
 GET http://localhost:3000
 
 
-# REGISTER
+### REGISTER
 POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 Accept: application/json
+Cache-Control: no-cache
 
 {
   "nim": "12345",
   "password": "test",
   "username": "test",
-  "fullname": "test",
-  "password": "test"
+  "fullname": "test"
+}
+
+### LOGIN
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+
+{
+ "identifier": "12345",
+ "password": "test"
 }
 

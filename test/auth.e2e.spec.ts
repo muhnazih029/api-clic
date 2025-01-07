@@ -35,7 +35,7 @@ describe('AuthController (e2e)', () => {
           fullname: 'Test User',
         }),
       });
-      console.log(res);
+      logger.setLocation('auth.e2e.spec.register');
       logger.info('REGISTER API success res', res);
 
       const body = await res.json();
@@ -58,7 +58,7 @@ describe('AuthController (e2e)', () => {
           fullname: 'Test User',
         }),
       });
-      console.log(res);
+      logger.setLocation('auth.e2e.spec.register');
       logger.info('REGISTER API success res', res);
 
       const body = await res.json();
@@ -82,7 +82,7 @@ describe('AuthController (e2e)', () => {
           fullname: '',
         }),
       });
-      console.log(res);
+      logger.setLocation('auth.e2e.spec.register');
       logger.info('REGISTER API error res', res);
 
       const body = await res.json();
@@ -106,7 +106,7 @@ describe('AuthController (e2e)', () => {
           fullname: 'tessss',
         }),
       });
-      console.log(res);
+      logger.setLocation('auth.e2e.spec.register');
       logger.info('REGISTER API error res', res);
 
       const body = await res.json();
@@ -129,7 +129,7 @@ describe('AuthController (e2e)', () => {
           fullname: 'tessss',
         }),
       });
-      console.log(res);
+      logger.setLocation('auth.e2e.spec.register');
       logger.info('REGISTER API error res', res);
 
       const body = await res.json();
@@ -138,6 +138,119 @@ describe('AuthController (e2e)', () => {
       expect(res.status).toBe(400);
       expect(body).toBeDefined();
       expect(body.message).toBe('The credential is already registered');
+      expect(body.errors).toBe(true);
+    });
+  });
+
+  describe('[Login API] POST /api/auth/login', () => {
+    beforeEach(async () => {
+      await TestService.deleteUser();
+      await TestService.createUser('nim');
+      await TestService.createUser('username');
+    });
+    afterEach(async () => {});
+
+    it('should be able to login using nim', async () => {
+      const res = await app.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: '12345',
+          password: 'test',
+        }),
+      });
+      logger.setLocation('auth.e2e.spec.login');
+      logger.info('LOGIN API success res', res);
+
+      const body = await res.json();
+      logger.info('LOGIN API success body', res);
+
+      expect(res.status).toBe(200);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('OK');
+      expect(body.data).toBeDefined();
+      expect(body.data.at).toBeDefined();
+      expect(body.data.rt).toBeDefined();
+    });
+
+    it('should be able to login using username', async () => {
+      const res = await app.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: 'test',
+          password: 'test',
+        }),
+      });
+      logger.setLocation('auth.e2e.spec.login');
+      logger.info('LOGIN API success res', res);
+
+      const body = await res.json();
+      logger.info('LOGIN API success body', res);
+
+      expect(res.status).toBe(200);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('OK');
+      expect(body.data).toBeDefined();
+      expect(body.data.at).toBeDefined();
+      expect(body.data.rt).toBeDefined();
+    });
+
+    it('should be rejected if password invalid', async () => {
+      const res = await app.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: 'test',
+          password: 'rahasia',
+        }),
+      });
+      logger.setLocation('auth.e2e.spec.login');
+      logger.info('LOGIN API error res', res);
+
+      const body = await res.json();
+      logger.info('LOGIN API error body', res);
+
+      expect(res.status).toBe(401);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('The credential is invalid');
+      expect(body.errors).toBe(true);
+    });
+
+    it('should be rejected if request invalid', async () => {
+      const res = await app.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: '',
+          password: '',
+        }),
+      });
+      logger.setLocation('auth.e2e.spec.login');
+      logger.info('LOGIN API error res', res);
+
+      const body = await res.json();
+      logger.info('LOGIN API error body', res);
+
+      expect(res.status).toBe(400);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('Validation error');
+      expect(body.errors).toBe(true);
+    });
+
+    it('should be rejected if user not registered', async () => {
+      const res = await app.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: 'notfound',
+          password: 'test',
+        }),
+      });
+      logger.setLocation('auth.e2e.spec.login');
+      logger.info('LOGIN API error res', res);
+
+      const body = await res.json();
+      logger.info('LOGIN API error body', res);
+
+      expect(res.status).toBe(404);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('The credential is not registered');
       expect(body.errors).toBe(true);
     });
   });

@@ -45,7 +45,7 @@ export class TestService {
       data: {
         nim: identifier === 'nim' ? '12345' : '54231',
         username: identifier === 'username' ? 'test' : 'tessss',
-        password: 'test',
+        password: await Bun.password.hash('test', 'bcrypt'),
       },
     });
   }

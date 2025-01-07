@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
-import { HTTPException } from 'hono/http-exception';
 import { authRoute } from 'src/routes';
-import { ZodError } from 'zod';
+import { errorMiddleware } from './middlewares';
+// import { json } from 'hono/';
 
 const app = new Hono();
+
+// app.use('/*', json());
 
 app.get('/', (c) => {
   return c.text('Hello Hono!');
@@ -11,33 +13,6 @@ app.get('/', (c) => {
 
 app.route('/api/auth', authRoute);
 
-app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    return c.json(
-      {
-        errors: true,
-        message: err.message,
-      },
-      400,
-    );
-  }
-  if (err instanceof ZodError) {
-    return c.json(
-      {
-        errors: true,
-        message: 'Validation error',
-        data: err.errors,
-      },
-      400,
-    );
-  }
-  return c.json(
-    {
-      errors: true,
-      message: 'Something went wrong. Call developer',
-    },
-    500,
-  );
-});
+app.onError(errorMiddleware);
 
 export default app;

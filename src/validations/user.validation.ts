@@ -7,4 +7,8 @@ export class AuthValidation {
     password: z.string().min(1).max(20),
     fullname: z.string().min(1).max(25),
   });
+  static LOGIN: ZodType = z.object({
+    identifier: z.string().min(1).max(10),
+    password: z.string().min(1).max(20),
+  });
 }
