@@ -39,7 +39,7 @@ export class PrismaProvider extends PrismaClient<
       this.logger.error('prisma error', e);
     });
     this.$on('query', (e) => {
-      this.logger.info('prisma query', e);
+      this.logger.debug('prisma query', e);
     });
   }
 }

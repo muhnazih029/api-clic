@@ -4,6 +4,18 @@ import { ENV } from 'src/constants';
 
 // import { environment } from '../../shared/constants';
 
+type TMessage = {
+  text: string;
+  location: string;
+  timestamp: string;
+  meta: object;
+};
+
+type TInfo = {
+  level: string;
+  message: TMessage;
+};
+
 export class LoggerProvider {
   private location: string;
   private readonly logger: Logger;
@@ -17,69 +29,50 @@ export class LoggerProvider {
       level: 'debug',
     };
 
-    if (ENV.NODE_ENV === 'development') {
-      transportOptions.format = format.combine(format.prettyPrint());
-    } else {
-      transportOptions.format = format.combine(
-        format.errors({ stack: true }),
-        format.json(),
-      );
-    }
+    const { errors, json, combine, prettyPrint, colorize, printf } = format;
 
+    if (ENV.NODE_ENV === 'development') {
+      transportOptions.format = combine(
+        colorize(),
+        printf(({ level, message }: TInfo) => {
+          return `[${level}]: (${message.timestamp}) ${message.text} (at ${message.location})`;
+        }),
+      );
+    } else if (ENV.NODE_ENV === 'test') {
+      transportOptions.format = combine(errors({ stack: true }), json());
+    } else {
+      transportOptions.format = combine(prettyPrint());
+    }
     this.logger = createLogger({
       transports: [new transports.Console(transportOptions)],
     });
   }
 
   error<T>(message: string, meta?: T): Logger {
-    const timestamp = new Date().toISOString();
-
-    return this.logger.error({
-      message,
-      location: this.location,
-      timestamp,
-      meta,
-    });
+    return this.format<T>(message, meta, 'error');
   }
 
   warn<T>(message: string, meta?: T): Logger {
-    const timestamp = new Date().toISOString();
-
-    return this.logger.warn({
-      message,
-      location: this.location,
-      timestamp,
-      meta,
-    });
+    return this.format<T>(message, meta, 'warn');
   }
 
   debug<T>(message: string, meta?: T): Logger {
-    const timestamp = new Date().toISOString();
-
-    return this.logger.debug({
-      message,
-      location: this.location,
-      timestamp,
-      meta,
-    });
+    return this.format<T>(message, meta, 'debug');
   }
 
   verbose<T>(message: string, meta?: T): Logger {
-    const timestamp = new Date().toISOString();
-
-    return this.logger.verbose({
-      message,
-      location: this.location,
-      timestamp,
-      meta,
-    });
+    return this.format<T>(message, meta, 'verbose');
   }
 
   info<T>(message: string, meta?: T): Logger {
+    return this.format<T>(message, meta, 'info');
+  }
+
+  private format<T>(text: string, meta: T, variant: string): Logger {
     const timestamp = new Date().toISOString();
 
-    return this.logger.info({
-      message,
+    return this.logger[variant]({
+      text,
       location: this.location,
       timestamp,
       meta,

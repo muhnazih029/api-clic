@@ -33,7 +33,7 @@ export class AuthService {
     );
 
     this.logger.setLocation('auth.service.register');
-    this.logger.info('validatedData', validatedData);
+    this.logger.debug('validatedData', validatedData);
 
     const userByNim = await this.userRepository.findFirst({
       where: {
@@ -96,7 +96,7 @@ export class AuthService {
     );
 
     this.logger.setLocation('auth.service.login');
-    this.logger.info('validatedData', validatedData);
+    this.logger.debug('validatedData', validatedData);
 
     const user = await this.userRepository.findFirst({
       where: {
@@ -112,12 +112,12 @@ export class AuthService {
         message: 'The credential is not registered',
       });
 
-    this.logger.info('USER KDAGJKAGJKG', user);
+    this.logger.debug('USER', user);
 
     const success = await this.verify(validatedData.password, user.password);
 
     if (!success) {
-      this.logger.info('success KDAGJKAGJKG', success);
+      this.logger.debug('success KDAGJKAGJKG', success);
 
       throw new HTTPException(401, {
         message: 'The credential is invalid',

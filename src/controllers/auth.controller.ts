@@ -3,7 +3,6 @@ import { authService, type AuthService } from 'src/services';
 import { RegisterRequest } from 'src/models';
 import { logger, type LoggerProvider } from 'src/providers';
 import { TAuthorizeContext, TCustomContext } from 'src/types';
-// import { hideZodErrorDataMiddleware } from 'src/middlewares';
 import { ZodError } from 'zod';
 import { HTTPException } from 'hono/http-exception';
 
@@ -21,10 +20,11 @@ export class AuthController {
     const data: RegisterRequest = await c.req.json();
 
     this.logger.setLocation('auth.controller.register');
-    this.logger.info('request', data);
+    this.logger.info('registering...');
+    this.logger.debug('request', data);
 
     const result = await this.authService.register(data);
-    this.logger.info('response', result);
+    this.logger.debug('response', result);
 
     return c.json(result, 201);
   }
@@ -34,13 +34,13 @@ export class AuthController {
       const data = await c.req.json();
 
       this.logger.setLocation('auth.controller.login');
-      this.logger.info('request ', data);
+      this.logger.info('loggingin...');
+      this.logger.debug('request ', data);
 
       const result = await this.authService.login(data);
 
-      this.logger.info('response', result);
+      this.logger.debug('response', result);
 
-      console.log('🚀 ~ AuthController ~ login ~ logger:');
       return c.json(result, 200);
     } catch (err) {
       if (err instanceof ZodError)
@@ -56,11 +56,12 @@ export class AuthController {
     const { id, token } = c.get('user');
 
     this.logger.setLocation('auth.controller.refresh');
-    this.logger.info('request', { id, token });
+    this.logger.info(`generating... ${id}`);
+    this.logger.debug('request', { id, token });
 
     const result = await this.authService.refresh(id, token);
 
-    this.logger.info('response', result);
+    this.logger.debug('response', result);
 
     return c.json(result, 200);
   }
@@ -70,11 +71,12 @@ export class AuthController {
     const { id } = c.get('user');
 
     this.logger.setLocation('auth.controller.logout');
-    this.logger.info('request', { id });
+    this.logger.info(`logouting... ${id}`);
+    this.logger.debug('request', { id });
 
     const result = await this.authService.logout(id);
 
-    this.logger.info('response', result);
+    this.logger.debug('response', result);
 
     return c.json(result, 200);
   }
