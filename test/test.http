@@ -15,8 +15,8 @@ Cache-Control: no-cache
   "fullname": "test"
 }
 {{
-      REFRESH_TOKEN = response.parsedBody.data.token
-      ACCESS_TOKEN = response.parsedBody.data.token
+      REFRESH_TOKEN = response.parsedBody.data?.token
+      ACCESS_TOKEN = response.parsedBody.data?.token
 }}
 
 ### LOGIN
@@ -30,8 +30,8 @@ Cache-Control: no-cache
  "password": "test"
 }
 {{
-    REFRESH_TOKEN = response.parsedBody.data.rt
-    ACCESS_TOKEN = response.parsedBody.data.at
+    REFRESH_TOKEN = response.parsedBody.data?.rt
+    ACCESS_TOKEN = response.parsedBody.data?.at
 }}
 
 ### REFRESH
@@ -42,8 +42,8 @@ Cache-Control: no-cache
 Authorization: Bearer {{REFRESH_TOKEN}}
 
 {{
-    REFRESH_TOKEN = response.parsedBody.data.rt
-    ACCESS_TOKEN = response.parsedBody.data.at
+    REFRESH_TOKEN = response.parsedBody.data?.rt
+    ACCESS_TOKEN = response.parsedBody.data?.at
 }}
 
 ### LOGOUT

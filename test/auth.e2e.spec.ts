@@ -1,4 +1,3 @@
-import { logger } from 'src/providers/logger.provider';
 import {
   afterAll,
   afterEach,
@@ -8,10 +7,17 @@ import {
   expect,
   it,
 } from 'bun:test';
+
 import app from 'src';
+
+import { logger } from 'src/providers';
+import { PATH } from 'src/constants';
+
 import { TestService } from './test.service';
 
 describe('AuthController (e2e)', () => {
+  const baseUrl = '/api/auth';
+
   beforeAll(async () => {
     logger.setLocation('auth.e2e.spec');
   });
@@ -26,7 +32,7 @@ describe('AuthController (e2e)', () => {
     afterEach(async () => {});
 
     it('should be able to register', async () => {
-      const res = await app.request('/api/auth/register', {
+      const res = await app.request(`${baseUrl}${PATH.REGISER}`, {
         method: 'POST',
         body: JSON.stringify({
           nim: '12345',
@@ -50,7 +56,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should be able to register if username undifined', async () => {
-      const res = await app.request('/api/auth/register', {
+      const res = await app.request(`${baseUrl}${PATH.REGISER}`, {
         method: 'POST',
         body: JSON.stringify({
           nim: '12345',
@@ -73,7 +79,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should be rejected if request invalid', async () => {
-      const res = await app.request('/api/auth/register', {
+      const res = await app.request(`${baseUrl}${PATH.REGISER}`, {
         method: 'POST',
         body: JSON.stringify({
           nim: '12345',
@@ -97,7 +103,7 @@ describe('AuthController (e2e)', () => {
 
     it('should be rejected if register the same nim', async () => {
       await TestService.createUser('nim');
-      const res = await app.request('/api/auth/register', {
+      const res = await app.request(`${baseUrl}${PATH.REGISER}`, {
         method: 'POST',
         body: JSON.stringify({
           nim: '12345',
@@ -120,7 +126,7 @@ describe('AuthController (e2e)', () => {
 
     it('should be rejected if register the same username', async () => {
       await TestService.createUser('username');
-      const res = await app.request('/api/auth/register', {
+      const res = await app.request(`${baseUrl}${PATH.REGISER}`, {
         method: 'POST',
         body: JSON.stringify({
           nim: '27537128',
@@ -151,7 +157,7 @@ describe('AuthController (e2e)', () => {
     afterEach(async () => {});
 
     it('should be able to login using nim', async () => {
-      const res = await app.request('/api/auth/login', {
+      const res = await app.request(`${baseUrl}${PATH.LOGIN}`, {
         method: 'POST',
         body: JSON.stringify({
           identifier: '12345',
@@ -173,7 +179,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should be able to login using username', async () => {
-      const res = await app.request('/api/auth/login', {
+      const res = await app.request(`${baseUrl}${PATH.LOGIN}`, {
         method: 'POST',
         body: JSON.stringify({
           identifier: 'test',
@@ -195,7 +201,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should be rejected if password invalid', async () => {
-      const res = await app.request('/api/auth/login', {
+      const res = await app.request(`${baseUrl}${PATH.LOGIN}`, {
         method: 'POST',
         body: JSON.stringify({
           identifier: 'test',
@@ -215,7 +221,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should be rejected if request is invalid', async () => {
-      const res = await app.request('/api/auth/login', {
+      const res = await app.request(`${baseUrl}${PATH.LOGIN}`, {
         method: 'POST',
         body: JSON.stringify({
           identifier: '',
@@ -235,7 +241,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should be rejected if user not registered', async () => {
-      const res = await app.request('/api/auth/login', {
+      const res = await app.request(`${baseUrl}${PATH.LOGIN}`, {
         method: 'POST',
         body: JSON.stringify({
           identifier: 'notfound',
@@ -267,7 +273,7 @@ describe('AuthController (e2e)', () => {
       const refreshToken = await TestService.getRefreshToken();
       const headers = new Headers();
       headers.set('Authorization', `Bearer ${refreshToken}`);
-      const res = await app.request('/api/auth/refresh', {
+      const res = await app.request(`${baseUrl}${PATH.REFRESH}`, {
         method: 'GET',
         headers,
       });
@@ -291,7 +297,7 @@ describe('AuthController (e2e)', () => {
       const refreshToken = 'invalid';
       const headers = new Headers();
       headers.set('Authorization', `Bearer ${refreshToken}`);
-      const res = await app.request('/api/auth/refresh', {
+      const res = await app.request(`${baseUrl}${PATH.REFRESH}`, {
         method: 'GET',
         headers,
       });
@@ -309,7 +315,7 @@ describe('AuthController (e2e)', () => {
     });
   });
 
-  describe('[AuthRefresh API] GET /api/auth/refresh', () => {
+  describe('[Logout API] DELETE /api/auth/', () => {
     beforeEach(async () => {
       await TestService.deleteUser();
       await TestService.createUser('nim');
@@ -317,24 +323,27 @@ describe('AuthController (e2e)', () => {
     });
     afterEach(async () => {});
 
-    it('should be able to refresh token', async () => {
-      let res = await app.request('/api/auth/login', {
+    it('should be able to logout', async () => {
+      let res = await app.request(`${baseUrl}${PATH.LOGIN}`, {
         method: 'POST',
         body: JSON.stringify({
           identifier: '12345',
           password: 'test',
         }),
       });
+
       const accessToken = await res.json().then((res) => res.data.at);
+
       const headers = new Headers();
       headers.set('Authorization', `Bearer ${accessToken}`);
-      res = await app.request('/api/auth', {
+      logger.setLocation('auth.e2e.spec.logout');
+      logger.info('LOGOUT API success accessToken', accessToken);
+
+      res = await app.request(`${baseUrl}${PATH.LOGOUT}`, {
         method: 'DELETE',
         headers,
       });
 
-      logger.setLocation('auth.e2e.spec.logout');
-      logger.info('LOGOUT API success accessToken', accessToken);
       logger.info('LOGOUT API success res', res);
 
       const body = await res.json();
@@ -348,15 +357,17 @@ describe('AuthController (e2e)', () => {
 
     it('should be rejected if access token is invalid', async () => {
       const accessToken = 'invalid';
+
       const headers = new Headers();
       headers.set('Authorization', `Bearer ${accessToken}`);
-      const res = await app.request('/api/auth', {
+      logger.setLocation('auth.e2e.spec.logout');
+      logger.info('LOGOUT API success accessToken', accessToken);
+
+      const res = await app.request(`${baseUrl}${PATH.LOGOUT}`, {
         method: 'DELETE',
         headers,
       });
 
-      logger.setLocation('auth.e2e.spec.logout');
-      logger.info('LOGOUT API success accessToken', accessToken);
 
       const body = await res.json();
       logger.info('LOGOUT API error body', res);

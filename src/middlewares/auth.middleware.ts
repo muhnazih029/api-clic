@@ -1,11 +1,13 @@
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
+
 import { JsonWebTokenError, TokenExpiredError, verify } from 'jsonwebtoken';
+
 import { ENV } from 'src/constants';
 import { logger } from 'src/providers';
-import { TPayload } from 'src/types';
+import { TEnv, TPayload } from 'src/types';
 
-const factory = createFactory();
+const factory = createFactory<TEnv>();
 export const accessMidleware = factory.createMiddleware(async (c, next) => {
   try {
     logger.setLocation('auth.middleware.access');

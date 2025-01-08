@@ -3,6 +3,7 @@ import { logger } from 'hono/logger';
 
 import { authRoute } from 'src/routes';
 import { customLogger, errorMiddleware } from './middlewares';
+import { ENV } from './constants';
 
 const app = new Hono()
   .use(logger(customLogger))
@@ -12,4 +13,8 @@ const app = new Hono()
   .route('/api/auth', authRoute)
   .onError(errorMiddleware);
 
-export default app;
+export default {
+  fetch: app.fetch,
+  port: ENV.PORT,
+  ...app
+};
