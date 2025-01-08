@@ -1,18 +1,15 @@
 import { Hono } from 'hono';
+import { logger } from 'hono/logger';
+
 import { authRoute } from 'src/routes';
-import { errorMiddleware } from './middlewares';
-// import { json } from 'hono/';
+import { customLogger, errorMiddleware } from './middlewares';
 
-const app = new Hono();
-
-// app.use('/*', json());
-
-app.get('/', (c) => {
-  return c.text('Hello Hono!');
-});
-
-app.route('/api/auth', authRoute);
-
-app.onError(errorMiddleware);
+const app = new Hono()
+  .use(logger(customLogger))
+  .get('/', (c) => {
+    return c.text('Hello Hono!');
+  })
+  .route('/api/auth', authRoute)
+  .onError(errorMiddleware);
 
 export default app;
