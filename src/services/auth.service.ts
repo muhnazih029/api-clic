@@ -167,6 +167,36 @@ export class AuthService {
     };
   }
 
+  async logout(userId: string): Promise<WebResponse<boolean>> {
+    this.logger.setLocation('auth.service.logout');
+
+    const user = await this.userRepository.findFirst({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user)
+      throw new HTTPException(401, {
+        message: 'The credential is invalid',
+      });
+
+    await this.userRepository.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refresh: null,
+        updatedAt: new Date(),
+      },
+    });
+
+    return {
+      message: 'OK',
+      data: true,
+    };
+  }
+
   async authenticate(user: User): Promise<Record<string, string>> {
     const role = user.role.toLowerCase() as 'admin' | 'user';
 
@@ -190,11 +220,6 @@ export class AuthService {
     });
     return { at, rt };
   }
-
-  // logout(accessToken: string): WebResponse<boolean> {
-  //   this.logger.info('logout');
-  //   return null;
-  // }
 
   hash(data: string): Promise<string> {
     return password.hash(data, 'bcrypt');

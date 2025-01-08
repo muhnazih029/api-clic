@@ -64,6 +64,20 @@ export class AuthController {
 
     return c.json(result, 200);
   }
+
+  async logout(c: TAuthorizeContext<''>) {
+    //buat logout dia ga punya tambahan url
+    const { id } = c.get('user');
+
+    this.logger.setLocation('auth.controller.logout');
+    this.logger.info('request', { id });
+
+    const result = await this.authService.logout(id);
+
+    this.logger.info('response', result);
+
+    return c.json(result, 200);
+  }
 }
 
 export const authController = new AuthController();

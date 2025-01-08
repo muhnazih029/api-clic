@@ -45,3 +45,10 @@ Authorization: Bearer {{REFRESH_TOKEN}}
     REFRESH_TOKEN = response.parsedBody.data.rt
     ACCESS_TOKEN = response.parsedBody.data.at
 }}
+
+### LOGOUT
+DELETE http://localhost:3000/api/auth
+Content-Type: application/json
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{ACCESS_TOKEN}}

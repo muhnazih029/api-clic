@@ -214,7 +214,7 @@ describe('AuthController (e2e)', () => {
       expect(body.errors).toBe(true);
     });
 
-    it('should be rejected if request invalid', async () => {
+    it('should be rejected if request is invalid', async () => {
       const res = await app.request('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -287,7 +287,7 @@ describe('AuthController (e2e)', () => {
       expect(body.data.rt).toBeDefined();
     });
 
-    it('should be rejected if refresh token invalid', async () => {
+    it('should be rejected if refresh token is invalid', async () => {
       const refreshToken = 'invalid';
       const headers = new Headers();
       headers.set('Authorization', `Bearer ${refreshToken}`);
@@ -301,6 +301,65 @@ describe('AuthController (e2e)', () => {
 
       const body = await res.json();
       logger.info('REFRESH API error body', res);
+
+      expect(res.status).toBe(401);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('The credential is invalid');
+      expect(body.errors).toBe(true);
+    });
+  });
+
+  describe('[AuthRefresh API] GET /api/auth/refresh', () => {
+    beforeEach(async () => {
+      await TestService.deleteUser();
+      await TestService.createUser('nim');
+      await TestService.createUser('username');
+    });
+    afterEach(async () => {});
+
+    it('should be able to refresh token', async () => {
+      let res = await app.request('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          identifier: '12345',
+          password: 'test',
+        }),
+      });
+      const accessToken = await res.json().then((res) => res.data.at);
+      const headers = new Headers();
+      headers.set('Authorization', `Bearer ${accessToken}`);
+      res = await app.request('/api/auth', {
+        method: 'DELETE',
+        headers,
+      });
+
+      logger.setLocation('auth.e2e.spec.logout');
+      logger.info('LOGOUT API success accessToken', accessToken);
+      logger.info('LOGOUT API success res', res);
+
+      const body = await res.json();
+      logger.info('LOGOUT API success body', body);
+
+      expect(res.status).toBe(200);
+      expect(body).toBeDefined();
+      expect(body.message).toBe('OK');
+      expect(body.data).toBe(true);
+    });
+
+    it('should be rejected if access token is invalid', async () => {
+      const accessToken = 'invalid';
+      const headers = new Headers();
+      headers.set('Authorization', `Bearer ${accessToken}`);
+      const res = await app.request('/api/auth', {
+        method: 'DELETE',
+        headers,
+      });
+
+      logger.setLocation('auth.e2e.spec.logout');
+      logger.info('LOGOUT API success accessToken', accessToken);
+
+      const body = await res.json();
+      logger.info('LOGOUT API error body', res);
 
       expect(res.status).toBe(401);
       expect(body).toBeDefined();

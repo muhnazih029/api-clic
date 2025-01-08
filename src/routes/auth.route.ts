@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { PATH, TPath } from 'src/constants';
 import { authController } from 'src/controllers';
-import { refreshMidleware } from 'src/middlewares/auth.middleware';
+import { accessMidleware, refreshMidleware } from 'src/middlewares';
 import { TAuthorizeContext } from 'src/types';
 
 export const authRoute = new Hono();
@@ -19,4 +19,10 @@ authRoute.get(
   refreshMidleware,
   async (c: TAuthorizeContext<TPath['AUTH']['REFRESH']>) =>
     await authController.refresh(c),
+);
+
+authRoute.delete(
+  '/',
+  accessMidleware,
+  async (c: TAuthorizeContext<''>) => await authController.logout(c),
 );
