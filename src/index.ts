@@ -16,5 +16,5 @@ const app = new Hono()
 export default {
   fetch: app.fetch,
   port: ENV.PORT,
-  ...app
+  ...app,
 };

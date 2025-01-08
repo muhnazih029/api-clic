@@ -368,7 +368,6 @@ describe('AuthController (e2e)', () => {
         headers,
       });
 
-
       const body = await res.json();
       logger.info('LOGOUT API error body', res);
 
