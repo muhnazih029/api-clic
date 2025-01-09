@@ -2,7 +2,11 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 
 import { authRoute } from 'src/routes';
-import { customLogger, errorMiddleware, notFoundMiddleware } from './middlewares';
+import {
+  customLogger,
+  errorMiddleware,
+  notFoundMiddleware,
+} from './middlewares';
 import { ENV } from './constants';
 
 const app = new Hono()

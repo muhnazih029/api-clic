@@ -34,8 +34,11 @@ export const errorMiddleware: ErrorHandler = (err, c) => {
 };
 
 export const notFoundMiddleware: NotFoundHandler = (c) => {
-  return c.json({
-    errors: true,
-    message: 'Path Not Found',
-  }, 404);
+  return c.json(
+    {
+      errors: true,
+      message: 'Path Not Found',
+    },
+    404,
+  );
 };
