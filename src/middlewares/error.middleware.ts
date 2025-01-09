@@ -1,4 +1,4 @@
-import { ErrorHandler } from 'hono';
+import { ErrorHandler, NotFoundHandler } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 import { ZodError } from 'zod';
@@ -31,4 +31,11 @@ export const errorMiddleware: ErrorHandler = (err, c) => {
   logger.info('Handling Error...');
 
   return c.json(errorResponse, statusCode);
+};
+
+export const notFoundMiddleware: NotFoundHandler = (c) => {
+  return c.json({
+    errors: true,
+    message: 'Path Not Found',
+  }, 404);
 };

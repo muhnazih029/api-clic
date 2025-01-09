@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 
 import { authRoute } from 'src/routes';
-import { customLogger, errorMiddleware } from './middlewares';
+import { customLogger, errorMiddleware, notFoundMiddleware } from './middlewares';
 import { ENV } from './constants';
 
 const app = new Hono()
@@ -11,7 +11,8 @@ const app = new Hono()
     return c.text('Hello Hono!');
   })
   .route('/api/auth', authRoute)
-  .onError(errorMiddleware);
+  .onError(errorMiddleware)
+  .notFound(notFoundMiddleware);
 
 export default {
   fetch: app.fetch,
