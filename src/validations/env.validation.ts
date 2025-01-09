@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 const EnvSchema = z.object({
   NODE_ENV: z.string().default('development'),
+  LOG_LEVEL: z
+    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
+    .default('info'),
   DATABASE_URL: z.string(),
   AT_SECRET: z.string(),
   RT_SECRET: z.string(),

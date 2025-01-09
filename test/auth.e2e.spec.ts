@@ -8,7 +8,7 @@ import {
   it,
 } from 'bun:test';
 
-import app from 'src';
+import app from 'src/server';
 
 import { logger } from 'src/providers';
 import { PATH } from 'src/constants';

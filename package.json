@@ -10,13 +10,14 @@
     "dev": "bun run --hot src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test:e2e": "bun test e2e",
+    "test:e2e": "LOG_LEVEL=debug bun test e2e",
     "prepare": "husky",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
+    "@scalar/hono-api-reference": "^0.5.165",
     "hono": "^4.6.15",
     "jsonwebtoken": "^9.0.2",
     "winston": "^3.17.0",

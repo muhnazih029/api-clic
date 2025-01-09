@@ -26,7 +26,7 @@ export class LoggerProvider {
 
   constructor() {
     const transportOptions: ConsoleTransportOptions = {
-      level: 'debug',
+      level: ENV.LOG_LEVEL,
     };
 
     const { errors, json, combine, prettyPrint, colorize, printf } = format;
