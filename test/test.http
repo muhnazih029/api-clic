@@ -1,5 +1,5 @@
 ### EXAMPLE
-GET http://localhost:3000
+GET http://localhost:3000/yaml
 
 
 ### REGISTER

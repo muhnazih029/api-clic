@@ -17,17 +17,27 @@ const app = new Hono({
   .route('/api/auth', authRoute)
   .onError(errorMiddleware)
   .notFound(notFoundMiddleware)
-  .get('/doc/openapi.json', serveStatic({ path: './doc/openapi.json' }))
+  .get(
+    '/yaml',
+    serveStatic({
+      path: './open-api/openapi.yaml',
+    }),
+  )
   .get(
     '/docs',
     apiReference({
       spec: {
-        url: '/doc/openapi.json',
+        url: '/yaml',
       },
-      theme: 'moon',
+      layout: 'classic',
+      theme: 'deepSpace',
       pageTitle: 'CLIC API >> Auth',
       // showSidebar: false,
       hideDownloadButton: true,
+      defaultHttpClient: {
+        targetKey: 'js',
+        clientKey: 'axios',
+      },
     }),
   )
   .get('/', (c) => c.text('Hello Hono!'));
