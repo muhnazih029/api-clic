@@ -1,8 +1,10 @@
+import { ValidatedENV } from 'src/validations';
+
 export const ENV = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: +(process.env.PORT || 3000),
+  NODE_ENV: ValidatedENV.NODE_ENV,
+  PORT: ValidatedENV.PORT,
   secret: {
-    AT: process.env.AT_SECRET,
-    RT: process.env.RT_SECRET,
+    AT: ValidatedENV.AT_SECRET,
+    RT: ValidatedENV.RT_SECRET,
   },
 } as const;
