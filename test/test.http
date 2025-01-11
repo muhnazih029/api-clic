@@ -1,9 +1,10 @@
+@BASE_URL=http://localhost:3000
 ### EXAMPLE
-GET http://localhost:3000/yaml
+GET {{BASE_URL}}/
 
 
 ### REGISTER
-POST http://localhost:3000/api/auth/register
+POST {{BASE_URL}}/api/auth/register
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache
@@ -20,7 +21,7 @@ Cache-Control: no-cache
 }}
 
 ### LOGIN
-POST http://localhost:3000/api/auth/login
+POST {{BASE_URL}}/api/auth/login
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache
@@ -35,7 +36,7 @@ Cache-Control: no-cache
 }}
 
 ### REFRESH
-GET http://localhost:3000/api/auth/refresh
+GET {{BASE_URL}}/api/auth/refresh
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache
@@ -47,7 +48,7 @@ Authorization: Bearer {{REFRESH_TOKEN}}
 }}
 
 ### LOGOUT
-DELETE http://localhost:3000/api/auth
+DELETE {{BASE_URL}}/api/auth
 Content-Type: application/json
 Accept: application/json
 Cache-Control: no-cache
