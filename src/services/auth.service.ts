@@ -1,4 +1,4 @@
-import {  jwt, password, HTTPException, User } from './libs.import';
+import { jwt, password, HTTPException, User } from './libs.import';
 
 import { logger } from 'src/providers';
 import { prisma } from 'src/providers';
@@ -14,8 +14,7 @@ import { TPayload } from 'src/types';
 import { ENV } from 'src/constants';
 import { Service } from './abstract';
 
-export class AuthService  extends Service {
-
+export class AuthService extends Service {
   constructor() {
     super();
     this.userRepository = prisma.user;
