@@ -7,12 +7,31 @@ info:
 tags:
   - name: Auth
     description: Authentication endpoints
+  - name: Secure Access
+    description: Need to be authenticated using access token
+  - name: Secure Refresh
+    description: Need to be authenticated using refresh token
+  - name: Secure Admin
+    description: Need to be authenticated using access token as Administrator
 servers:
   - url: http://localhost:3000
+components:
+  securitySchemes:
+    accessToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Access token to access secure resources for authenticated user
+    refreshToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Refresh token to get/renew access token for authenticated user
 paths:
   '/api/auth/register':
     post:
       summary: Register User
+      description: Endpoint to register new user
       tags:
         - Auth
       requestBody:
@@ -44,13 +63,16 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: created
                   data:
                     type: object
                     properties:
                       at:
                         type: string
+                        description: Access token only available for 15 minutes
                       rt:
                         type: string
+                        description: Refresh token only available for 7 days
         '400':
           description: Validation or existence error.
           content:
@@ -62,12 +84,15 @@ paths:
                     type: boolean
                   message:
                     type: string
+                    example: Validation error
                   data:
                     type: array
                     items: {}
+                    description: array of error reference zod error
   '/api/auth/login':
     post:
       summary: Login User
+      description: Endpoint to login user
       tags:
         - Auth
       requestBody:
@@ -79,6 +104,7 @@ paths:
               properties:
                 identifier:
                   type: string
+                  description: Username or NIM of the user
                 password:
                   type: string
               required:
@@ -94,13 +120,16 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: OK
                   data:
                     type: object
                     properties:
                       at:
                         type: string
+                        description: Access token only available for 15 minutes
                       rt:
                         type: string
+                        description: Refresh token only available for 7 days
         '400':
           description: Validation error.
           content:
@@ -112,8 +141,11 @@ paths:
                     type: boolean
                   message:
                     type: string
+                    example: Validation error
                   data:
-                    type: string
+                    type: array
+                    items: {}
+                    description: array of error reference zod error
         '401':
           description: Credential invalid.
           content:
@@ -125,6 +157,7 @@ paths:
                     type: boolean
                   message:
                     type: string
+                    example: The credential in invalid
         '404':
           description: Credential not found.
           content:
@@ -136,23 +169,28 @@ paths:
                     type: boolean
                   message:
                     type: string
+                    example: The credential in not registered
   '/api/auth/refresh':
     get:
       summary: Refresh User Access Token
+      description: Endpoint to refresh access token, require refreshToken as security
       tags:
         - Auth
-      parameters:
-        - in: header
-          name: Authorization
-          description:
-            Refresh token to get/renew access token for authenticated user,
-            available for 7 days
-          required: true
-          schema:
-            type: string
-            required:
-              - Authorization
-            example: Bearer JWTREFRESHTOKEN
+        - Secure Refresh
+      security:
+        - refreshToken: []
+      # parameters:
+      #   - in: header
+      #     name: Authorization
+      #     description:
+      #       Refresh token to get/renew access token for authenticated user,
+      #       available for 7 days
+      #     required: true
+      #     schema:
+      #       type: string
+      #       required:
+      #         - Authorization
+      #       example: Bearer JWTREFRESHTOKEN
       responses:
         '200':
           description: Token refreshed successfully.
@@ -168,8 +206,10 @@ paths:
                     properties:
                       at:
                         type: string
+                        description: Access token only available for 15 minutes
                       rt:
                         type: string
+                        description: Refresh token only available for 7 days
         '401':
           description: Invalid credential.
           content:
@@ -181,23 +221,28 @@ paths:
                     type: boolean
                   message:
                     type: string
+                    example: The credential is invalid
   '/api/auth':
     delete:
       summary: Logout User
       tags:
         - Auth
-      parameters:
-        - in: header
-          name: Authorization
-          description:
-            Access token to get/renew access token for authenticated user,
-            available for 7 days
-          required: true
-          schema:
-            type: string
-            required:
-              - Authorization
-            example: Bearer JWTACCESSTOKEN
+        - Secure Access
+      description: Endpoint to end the user session, require accessToken as security
+      security:
+        - accessToken: []
+      # parameters:
+      #   - in: header
+      #     name: Authorization
+      #     description:
+      #       Access token to get/renew access token for authenticated user,
+      #       available for 7 days
+      #     required: true
+      #     schema:
+      #       type: string
+      #       required:
+      #         - Authorization
+      #       example: Bearer JWTACCESSTOKEN
       responses:
         '200':
           description: Logout successful.
@@ -208,6 +253,7 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: OK
                   data:
                     type: boolean
         '401':
@@ -221,3 +267,4 @@ paths:
                     type: boolean
                   message:
                     type: string
+                    example: The credential is invalid
