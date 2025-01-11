@@ -1,6 +1,6 @@
-import { Prisma, jwt, password, HTTPException, User } from './libs.import';
+import {  jwt, password, HTTPException, User } from './libs.import';
 
-import { logger, LoggerProvider } from 'src/providers';
+import { logger } from 'src/providers';
 import { prisma } from 'src/providers';
 import {
   LoginRequest,
@@ -8,18 +8,16 @@ import {
   SuccessResponse,
   WebResponse,
 } from 'src/models';
-import { validationService, ValidationService } from './validation.service';
+import { validationService } from './validation.service';
 import { AuthValidation } from 'src/validations';
 import { TPayload } from 'src/types';
 import { ENV } from 'src/constants';
+import { Service } from './abstract';
 
-export class AuthService {
-  private userRepository: Prisma.UserDelegate;
-  private profileRepository: Prisma.ProfileDelegate;
-  private validationService: ValidationService;
-  private logger: LoggerProvider;
+export class AuthService  extends Service {
 
   constructor() {
+    super();
     this.userRepository = prisma.user;
     this.profileRepository = prisma.profile;
     this.validationService = validationService;
@@ -198,7 +196,7 @@ export class AuthService {
     };
   }
 
-  async authenticate(user: User): Promise<Record<string, string>> {
+  private async authenticate(user: User): Promise<Record<string, string>> {
     const role = user.role.toLowerCase() as 'admin' | 'user';
 
     const payload = {
@@ -207,8 +205,8 @@ export class AuthService {
       role,
     };
 
-    const at = this.signJWT(payload, ENV.secret.AT, '15m');
-    const rt = this.signJWT(payload, ENV.secret.RT, '7 days');
+    const at = AuthService.signJWT(payload, ENV.secret.AT, '15m');
+    const rt = AuthService.signJWT(payload, ENV.secret.RT, '7 days');
 
     await this.userRepository.update({
       where: {
@@ -222,21 +220,21 @@ export class AuthService {
     return { at, rt };
   }
 
-  hash(data: string): Promise<string> {
+  private hash(data: string): Promise<string> {
     return password.hash(data, 'bcrypt');
   }
 
-  verify(data: string, hash: string): Promise<boolean> {
+  private verify(data: string, hash: string): Promise<boolean> {
     return password.verify(data, hash, 'bcrypt');
   }
 
-  signJWT(data: TPayload, secret: string, expiresIn: string): string {
+  static signJWT(data: TPayload, secret: string, expiresIn: string): string {
     return jwt.sign(data, secret, {
       expiresIn,
     });
   }
 
-  verifyJWT(data: string, secret: string): TPayload {
+  static verifyJWT(data: string, secret: string): TPayload {
     return jwt.verify(data, secret) as TPayload;
   }
 }

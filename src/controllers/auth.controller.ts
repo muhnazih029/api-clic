@@ -4,17 +4,16 @@ import { HTTPException } from 'hono/http-exception';
 
 import { ZodError } from 'zod';
 
-import { authService, type AuthService } from 'src/services';
+import { authService } from 'src/services';
 import { LoginRequest, RegisterRequest } from 'src/models';
 import { TPath } from 'src/constants';
-import { logger, type LoggerProvider } from 'src/providers';
+import { logger } from 'src/providers';
 import { TEnv } from 'src/types';
+import { Controller } from './abstract';
 
-export class AuthController {
-  private authService: AuthService;
-  private logger: LoggerProvider;
-
+export class AuthController extends Controller {
   constructor() {
+    super();
     this.authService = authService;
     this.logger = logger;
     this.logger.setLocation('auth.controller');

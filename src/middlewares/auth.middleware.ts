@@ -1,13 +1,15 @@
 import { createFactory } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 
-import { JsonWebTokenError, TokenExpiredError, verify } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { ENV } from 'src/constants';
 import { logger } from 'src/providers';
+import { AuthService } from 'src/services';
 import { TEnv, TPayload } from 'src/types';
 
 const factory = createFactory<TEnv>();
+
 export const accessMidleware = factory.createMiddleware(async (c, next) => {
   try {
     logger.setLocation('auth.middleware.access');
@@ -16,7 +18,7 @@ export const accessMidleware = factory.createMiddleware(async (c, next) => {
     logger.info('token', token);
 
     logger.info('AT', ENV.secret.AT);
-    const payload = verify(token, ENV.secret.AT) as TPayload;
+    const payload = AuthService.verifyJWT(token, ENV.secret.AT) as TPayload;
     logger.info('token', payload);
 
     c.set('user', { token, ...payload });
@@ -42,7 +44,7 @@ export const refreshMidleware = factory.createMiddleware(async (c, next) => {
     logger.info('token', token);
 
     logger.info('RT', ENV.secret.RT);
-    const payload = verify(token, ENV.secret.RT) as TPayload;
+    const payload = AuthService.verifyJWT(token, ENV.secret.RT) as TPayload;
     logger.info('token', payload);
 
     c.set('user', { token, ...payload });
