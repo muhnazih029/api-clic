@@ -7,7 +7,7 @@
 `POST /api/events`
 
 **Headers:**
-Authentication: "Bearer rt"
+Authentication: "Bearer at"
 
 ### Request Body:
 
@@ -16,9 +16,10 @@ Authentication: "Bearer rt"
   "title": "Event Title",
   "description": "Description of the event",
   "date": "2025-01-15",
-  "image": "base64encodedimage",
-  "location": "Event Location",
-  "locationUrl": "https://maps.google.com/location"
+  "image": "base64encodedimage // optional",
+  "userId": "cuid //from Auth",
+  "location": "Event Location // optional",
+  "locationUrl": "https://maps.google.com/location // optional"
 }
 ```
 
@@ -28,14 +29,7 @@ Authentication: "Bearer rt"
 {
   "message": "Created",
   "data": {
-    "id": "cuid",
     "title": "Event Title",
-    "description": "Description of the event",
-    "date": "2025-01-15",
-    "image": "https://storage.example.com/images/generatedImageUrl",
-    "location": "Event Location",
-    "locationUrl": "https://maps.google.com/location",
-    "userId": "cuid of creatorUserId",
     "createdAt": "2025-01-06T10:00:00.000Z",
     "updatedAt": "2025-01-06T10:00:00.000Z"
   }
@@ -48,13 +42,17 @@ Authentication: "Bearer rt"
 {
   "message": "Validation Error",
   "errors": true,
-  "data": {
-    "title": "Title is required",
-    "description": "Description of the event is required",
-    "date": "Date is required",
-    "image": "Image must be a valid Base64 string",
-    "location": "Location is required",
-  }
+  "data": [zodError]
+}
+```
+
+### Response Body (Unauthorize, 401):
+
+```json
+{
+  "message": "Unauthorized Access",
+  "errors": true,
+  "data": [zodError]
 }
 ```
 
@@ -137,16 +135,26 @@ Authentication: "Bearer rt"
 }
 ```
 
+### Response Body (Validation Error, 400):
+
+```json
+{
+  "message": "Validation Error",
+  "errors": true,
+  "data": [zodError]
+}
+```
+
 ---
 
 ## Update Event
 
 ### Endpoint:
 
-`PUT /api/events/{id}`
+`PATCH /api/events/{id}`
 
 **Headers:**
-Authentication: "Bearer rt"
+Authentication: "Bearer at"
 
 ### Request Body:
 
@@ -155,9 +163,10 @@ Authentication: "Bearer rt"
   "title": "Updated Event Title",
   "description": "Updated description of the event",
   "date": "2025-01-20",
-  "image": "base64updatedimage",
-  "location": "Updated Event Location",
-  "locationUrl": "https://maps.google.com/updatedlocation"
+  "image": "base64updatedimage //optional",
+  "userId": "cuid //from Auth",
+  "location": "Updated Event Location //optional",
+  "locationUrl": "https://maps.google.com/updatedlocation //optional"
 }
 ```
 
@@ -167,15 +176,13 @@ Authentication: "Bearer rt"
 {
   "message": "Updated",
   "data": {
-    "id": "cuid",
+    //anything from req body from user
     "title": "Updated Event Title",
     "description": "Updated description of the event",
     "date": "2025-01-20",
     "image": "https://storage.example.com/images/updatedEventImageUrl",
     "location": "Updated Event Location",
     "locationUrl": "https://maps.google.com/updatedlocation",
-    "userId": "creatorUserId",
-    "createdAt": "2025-01-06T10:00:00.000Z",
     "updatedAt": "2025-01-06T11:00:00.000Z"
   }
 }
@@ -187,6 +194,7 @@ Authentication: "Bearer rt"
 {
   "message": "Validation Error",
   "errors": true,
+  "data": [zodError]
 }
 ```
 
@@ -199,6 +207,16 @@ Authentication: "Bearer rt"
 }
 ```
 
+### Response Body (Unauthorize, 401):
+
+```json
+{
+  "message": "Unauthorized Access",
+  "errors": true,
+  "data": [zodError]
+}
+```
+
 ---
 
 ## Delete Event
@@ -208,17 +226,14 @@ Authentication: "Bearer rt"
 `DELETE /api/events/{id}`
 
 **Headers:**
-Authentication: "Bearer rt"
+Authentication: "Bearer at"
 
 ### Response Body (Success, 200):
 
 ```json
 {
   "message": "Deleted",
-  "data": {
-    "id": "cuid",
-    "title": "Deleted Event Title",
-  }
+  "data": true
 }
 ```
 
@@ -228,5 +243,15 @@ Authentication: "Bearer rt"
 {
   "message": "not found",
   "errors": true
+}
+```
+
+### Response Body (Unauthorize, 401):
+
+```json
+{
+  "message": "Unauthorized Access",
+  "errors": true,
+  "data": [zodError]
 }
 ```
