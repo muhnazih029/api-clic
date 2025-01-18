@@ -5,15 +5,16 @@
 Endpoint: POST /api/photos
 
 **Headers:**
-Authentication: "Bearer rt"
+Authentication: "Bearer at"
 
 ### Request Body:
 
 ```json
 {
-  "title": "Sunset in Bali",
-  "image": "Base64 encoded string",
-  "description": "this is the description about sunset in Bali"
+  "path": "Image user",
+  "title": "Sunset in Bali //optional",
+  "description": "this is the description about sunset in Bali //optional",
+  "userId": "cuid from Auth"
 }
 ```
 
@@ -23,11 +24,9 @@ Authentication: "Bearer rt"
 {
   "message": "Created",
   "data": {
-    "id": "cuid",
-    "title": "Sunset in Bali",
-    "path": "base64encodedimage",
-    "description": "this is the description about sunset in Bali",
-    "createdAt": "2025-01-06T12:00:00Z"
+    "path": "https://storage.example.com/images/updatedEventImageUrl",
+    "createdAt": "2025-01-06T12:00:00Z",
+    "updatedAt": "2025-01-06T12:00:00Z"
   }
 }
 ```
@@ -36,17 +35,23 @@ Authentication: "Bearer rt"
 
 ```json
 {
-  "message": "Validation error",
+  "message": "Validation Error",
   "errors": true,
-  "data": {
-    "title": "Title is required",
-    "image": "Image must be a valid Base64 string",
-    "description": "Image must have an description"
-  }
+  "data": [zodError]
 }
 ```
 
-### Response Body (Upload Error, 500):
+### Response Body (Unauthorize, 401):
+
+```json
+{
+  "message": "Unauthorized Access",
+  "errors": true,
+  "data": [zodError]
+}
+```
+
+### Response Body (Internal Server Error, 501):
 
 ```json
 {
@@ -54,6 +59,8 @@ Authentication: "Bearer rt"
   "errors": true
 }
 ```
+
+---
 
 ## Get All Photos
 
@@ -70,20 +77,24 @@ Authentication: "Bearer rt"
     {
       "id": "cuid",
       "title": "Sunset in Bali",
-      "path": "base64encodedimage",
-      "description": "this is the description about sunset in Bali",
-      "createdAt": "2025-01-06T12:00:00Z"
+      "path": "https://storage.example.com/images/updatedEventImageUrl",
+      "userId": "cuid",
+      "createdAt": "2025-01-06T12:00:00Z",
+      "updatedAt": "2025-01-06T12:00:00Z"
     },
     {
       "id": "cuid",
       "title": "Mountain View",
-      "path": "base64encodedimage",
-      "description": "this is the description about Mountain View",
-      "createdAt": "2025-01-05T15:30:00Z"
+      "path": "https://storage.example.com/images/updatedEventImageUrl",
+      "userId": "cuid",
+      "createdAt": "2025-01-05T15:30:00Z",
+      "updatedAt": "2025-01-06T12:00:00Z"
     }
   ]
 }
 ```
+
+---
 
 ## Get Photo by ID
 
@@ -98,11 +109,23 @@ Authentication: "Bearer rt"
   "message": "OK",
   "data": {
     "id": "cuid",
+    "path": "https://storage.example.com/images/updatedEventImageUrl",
     "title": "Sunset in Bali",
-    "path": "base64encodedimage",
     "description": "this is the description about sunset in Bali",
-    "createdAt": "2025-01-06T12:00:00Z"
+    "userId": "cuid",
+    "createdAt": "2025-01-06T12:00:00Z",
+    "updatedAt": "2025-01-06T12:00:00Z"
   }
+}
+```
+
+### Response Body (Validation Failed, 400):
+
+```json
+{
+  "message": "Validation Error",
+  "errors": true,
+  "data": [zodError]
 }
 ```
 
@@ -114,23 +137,32 @@ Authentication: "Bearer rt"
   "errors": true
 }
 ```
+
+---
 
 ## Delete Photo
 
 **Endpoint:** DELETE /api/photos/{id}
 
 **Headers:**
-Authentication: "Bearer rt"
+Authentication: "Bearer at"
 
 ### Response Body (Success, 200):
 
 ```json
 {
   "message": "Deleted",
-  "data": {
-    "id": "cuid",
-    "title": "Sunset in Bali"
-  }
+  "data": true
+}
+```
+
+### Response Body (Validation Failed, 400):
+
+```json
+{
+  "message": "Validation Error",
+  "errors": true,
+  "data": [zodError]
 }
 ```
 
@@ -140,5 +172,15 @@ Authentication: "Bearer rt"
 {
   "message": "Not found",
   "errors": true
+}
+```
+
+### Response Body (Unauthorize, 401):
+
+```json
+{
+  "message": "Unauthorized Access",
+  "errors": true,
+  "data": [zodError]
 }
 ```
