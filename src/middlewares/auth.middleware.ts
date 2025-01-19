@@ -26,11 +26,11 @@ export const accessMidleware = factory.createMiddleware(async (c, next) => {
     logger.setLocation('auth.middleware.access');
     const header = c.req.header('Authorization');
     const token = header ? header.split(' ')[1] : '';
-    logger.info('token', token);
+    logger.debug('token', token);
 
-    logger.info('AT', ENV.secret.AT);
+    logger.debug('AT', ENV.secret.AT);
     const payload = AuthService.verifyJWT(token, ENV.secret.AT) as TPayload;
-    logger.info('token', payload);
+    logger.debug('token', payload);
 
     userExist(payload.id);
 
@@ -54,11 +54,11 @@ export const refreshMidleware = factory.createMiddleware(async (c, next) => {
     logger.setLocation('auth.middleware.refresh');
     const header = c.req.header('Authorization');
     const token = header ? header.split(' ')[1] : '';
-    logger.info('token', token);
+    logger.debug('token', token);
 
-    logger.info('RT', ENV.secret.RT);
+    logger.debug('RT', ENV.secret.RT);
     const payload = AuthService.verifyJWT(token, ENV.secret.RT) as TPayload;
-    logger.info('token', payload);
+    logger.debug('token', payload);
 
     userExist(payload.id);
 
