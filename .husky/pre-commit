@@ -1,6 +1,4 @@
 echo "Preparing to commit..."
-echo "Formatting code..."
-bun format
 echo "Linting code..."
 bun lint
 echo "Testing code..."
