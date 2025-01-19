@@ -6,8 +6,10 @@ import { TPayload } from 'src/types';
 
 export class TestService {
   static async deleteAll() {
+    await this.deleteEvent();
     await this.deleteUser();
   }
+  // User
   static async getUser(): Promise<User> {
     return await prisma.user.findUnique({
       where: {
@@ -81,6 +83,24 @@ export class TestService {
   static generateJWT(data: TPayload, schema: 'AT' | 'RT') {
     return sign(data, ENV.secret[schema], {
       expiresIn: schema === 'AT' ? '15m' : '7 days',
+    });
+  }
+
+  // Event
+  static async deleteEvent(): Promise<void> {
+    await prisma.event.deleteMany({
+      where: {
+        creator: {
+          OR: [
+            {
+              nim: '12345',
+            },
+            {
+              username: 'test',
+            },
+          ]
+        }
+      },
     });
   }
 }

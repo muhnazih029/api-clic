@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { serveStatic } from 'hono/bun';
 
-import { authRoute } from 'src/routes';
+import { authRoute, eventRoute } from 'src/routes';
 import {
   customLogger,
   errorMiddleware,
@@ -15,6 +15,7 @@ const app = new Hono({
 })
   .use(logger(customLogger))
   .route('/api/auth', authRoute)
+  .route('/api/event', eventRoute)
   .onError(errorMiddleware)
   .notFound(notFoundMiddleware)
   .get(
