@@ -13,7 +13,7 @@ const EnvSchema = z.object({
 
 export type TEnv = z.infer<typeof EnvSchema>;
 
-const { data, error } = EnvSchema.safeParse(process.env);
+const { data, error } = EnvSchema.safeParse(Bun.env);
 
 if (error) {
   console.error('❌ Invalid Environment Variables');
