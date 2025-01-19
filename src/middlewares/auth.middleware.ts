@@ -4,9 +4,20 @@ import { HTTPException } from 'hono/http-exception';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { ENV } from 'src/constants';
-import { logger } from 'src/providers';
+import { logger, prisma } from 'src/providers';
 import { AuthService } from 'src/services';
 import { TEnv, TPayload } from 'src/types';
+
+const userExist = async (id: string) => {
+  const userCount = await prisma.user.count({
+    where: {
+      id,
+    },
+  });
+  if (userCount === 0) {
+    throw new HTTPException(404, { message: 'The Credential is invalid' });
+  }
+};
 
 const factory = createFactory<TEnv>();
 
@@ -20,6 +31,8 @@ export const accessMidleware = factory.createMiddleware(async (c, next) => {
     logger.info('AT', ENV.secret.AT);
     const payload = AuthService.verifyJWT(token, ENV.secret.AT) as TPayload;
     logger.info('token', payload);
+
+    userExist(payload.id);
 
     c.set('user', { token, ...payload });
 
@@ -46,6 +59,8 @@ export const refreshMidleware = factory.createMiddleware(async (c, next) => {
     logger.info('RT', ENV.secret.RT);
     const payload = AuthService.verifyJWT(token, ENV.secret.RT) as TPayload;
     logger.info('token', payload);
+
+    userExist(payload.id);
 
     c.set('user', { token, ...payload });
 
