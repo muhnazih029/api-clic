@@ -1,15 +1,15 @@
-import { createFactory } from 'hono/factory';
-import { BlankEnv } from 'hono/types';
-import { HTTPException } from 'hono/http-exception';
-
-import { ZodError } from 'zod';
-
-import { authService } from 'src/services';
-import { LoginRequest, RegisterRequest } from 'src/models';
-import { TPath } from 'src/constants';
-import { logger } from 'src/providers';
-import { TEnv } from 'src/types';
-import { Controller } from './abstract';
+import { TPath } from '~/constants';
+import { TEnv } from '~/types';
+import { logger } from '~/common/providers';
+import {
+  createFactory,
+  BlankEnv,
+  ZodError,
+  HTTPException,
+} from '~/common/libs';
+import { Controller } from '~/common/controller';
+import { authService } from './service';
+import { LoginRequest, RegisterRequest } from './model';
 
 export class AuthController extends Controller {
   constructor() {

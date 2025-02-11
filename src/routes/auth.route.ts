@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 
 import { PATH } from 'src/constants';
-import { authController } from 'src/controllers';
+import { authController } from '~/auth/controller';
 import { accessMidleware, refreshMidleware } from 'src/middlewares';
 
 export const authRoute = new Hono()

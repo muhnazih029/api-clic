@@ -1,5 +1,6 @@
-import { type LoggerProvider } from 'src/providers';
-import { type AuthService, EventService } from 'src/services';
+import { type AuthService } from '~/auth/service';
+import { type LoggerProvider } from '~/common/providers';
+import { type EventService } from '~/event/service';
 
 export abstract class Controller {
   protected logger: LoggerProvider;

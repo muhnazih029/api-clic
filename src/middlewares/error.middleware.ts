@@ -3,8 +3,8 @@ import { HTTPException } from 'hono/http-exception';
 
 import { ZodError } from 'zod';
 
-import { logger } from 'src/providers';
-import { WebResponse } from 'src/models';
+import { logger } from '~/common/providers';
+import { WebResponse } from '~/common/models';
 
 export const errorMiddleware: ErrorHandler = (err, c) => {
   let statusCode = err instanceof HTTPException ? err.status : 500;

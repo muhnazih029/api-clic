@@ -1,18 +1,9 @@
-import { HTTPException } from './libs.import';
-
-import { logger } from 'src/providers';
-import { prisma } from 'src/providers';
-import {
-  CreateEventRequest,
-  EventSuccessResponse,
-  WebResponse,
-} from 'src/models';
-
-import { validationService } from './validation.service';
-import { EventValidation } from 'src/validations';
-// import { TPayload } from 'src/types';
-// import { ENV } from 'src/constants';
-import { Service } from './abstract';
+import { HTTPException } from '~/common/libs';
+import { logger, prisma } from '~/common/providers';
+import { WebResponse } from '~/common/models';
+import { Service, validationService } from '~/common/services';
+import { EventValidation } from './validation';
+import { CreateEventRequest, EventSuccessResponse } from './model';
 
 export class EventService extends Service {
   constructor() {
@@ -23,7 +14,9 @@ export class EventService extends Service {
     this.logger.setLocation('event.service');
   }
 
-  async create(data: CreateEventRequest): Promise<WebResponse<EventSuccessResponse>> {
+  async create(
+    data: CreateEventRequest,
+  ): Promise<WebResponse<EventSuccessResponse>> {
     const validatedData = this.validationService.validate<CreateEventRequest>(
       EventValidation.CREATE,
       data,
@@ -85,6 +78,5 @@ export class EventService extends Service {
   //   };
   // }
 }
-
 
 export const eventService = new EventService();

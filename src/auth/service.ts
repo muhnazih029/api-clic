@@ -1,18 +1,12 @@
-import { jwt, password, HTTPException, User } from './libs.import';
-
-import { logger } from 'src/providers';
-import { prisma } from 'src/providers';
-import {
-  LoginRequest,
-  RegisterRequest,
-  SuccessResponse,
-  WebResponse,
-} from 'src/models';
-import { validationService } from './validation.service';
-import { AuthValidation } from 'src/validations';
-import { TPayload } from 'src/types';
-import { ENV } from 'src/constants';
-import { Service } from './abstract';
+import { jwt, password, HTTPException, User } from '~/common/libs';
+import { logger, prisma } from '~/common/providers';
+import { WebResponse } from '~/common/models';
+import { LoginRequest, RegisterRequest, SuccessResponse } from './model';
+import { validationService } from '~/common/services/validation.service';
+import { AuthValidation } from '~/common/validations';
+import { TPayload } from '~/types';
+import { ENV } from '~/constants';
+import { Service } from '~/common/services/service';
 
 export class AuthService extends Service {
   constructor() {

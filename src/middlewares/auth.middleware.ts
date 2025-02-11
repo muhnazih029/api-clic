@@ -3,10 +3,10 @@ import { HTTPException } from 'hono/http-exception';
 
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { ENV } from 'src/constants';
-import { logger, prisma } from 'src/providers';
-import { AuthService } from 'src/services';
-import { TEnv, TPayload } from 'src/types';
+import { ENV } from '~/constants';
+import { logger, prisma } from '~/common/providers';
+import { AuthService } from '../auth/service';
+import { TEnv, TPayload } from '~/types';
 
 const userExist = async (id: string) => {
   const userCount = await prisma.user.count({

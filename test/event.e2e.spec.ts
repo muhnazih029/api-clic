@@ -8,10 +8,10 @@ import {
   it,
 } from 'bun:test';
 
-import app from 'src/server';
+import app from '~/server';
 
-import { logger } from 'src/providers';
-import { PATH } from 'src/constants';
+import { logger } from '~/common/providers';
+import { PATH } from '~/constants';
 
 import { TestService } from './test.service';
 

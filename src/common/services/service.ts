@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { LoggerProvider } from 'src/providers';
+import { LoggerProvider } from '~/common/providers';
 import { ValidationService } from './validation.service';
 
 export abstract class Service {

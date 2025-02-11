@@ -1,4 +1,4 @@
-import { ValidatedENV } from 'src/validations';
+import { ValidatedENV } from '~/common/validations';
 
 export const ENV = {
   NODE_ENV: ValidatedENV.NODE_ENV,

@@ -1,6 +1,6 @@
-import { logger } from 'src/providers';
+import { logger } from '~/common/providers';
 import { beforeAll, describe, expect, it } from 'bun:test';
-import app from 'src/server';
+import app from '~/server';
 
 describe('example', () => {
   beforeAll(async () => {

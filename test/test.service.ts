@@ -1,8 +1,8 @@
 import { User } from '@prisma/client';
 import { sign } from 'jsonwebtoken';
-import { ENV } from 'src/constants';
-import { prisma } from 'src/providers';
-import { TPayload } from 'src/types';
+import { ENV } from '~/constants';
+import { prisma } from '~/common/providers';
+import { TPayload } from '~/types';
 
 export class TestService {
   static async deleteAll() {
@@ -98,8 +98,8 @@ export class TestService {
             {
               username: 'test',
             },
-          ]
-        }
+          ],
+        },
       },
     });
   }

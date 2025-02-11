@@ -2,12 +2,12 @@ import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { serveStatic } from 'hono/bun';
 
-import { authRoute, eventRoute } from 'src/routes';
+import { authRoute, eventRoute } from '~/routes';
 import {
   customLogger,
   errorMiddleware,
   notFoundMiddleware,
-} from './middlewares';
+} from '~/middlewares';
 import { apiReference } from '@scalar/hono-api-reference';
 
 const app = new Hono({

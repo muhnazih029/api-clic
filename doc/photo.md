@@ -11,7 +11,7 @@ Authentication: "Bearer at"
 
 ```json
 {
-  "path": "Image user",
+  "image": "Base64 Encoded Image",
   "title": "Sunset in Bali //optional",
   "description": "this is the description about sunset in Bali //optional",
   "userId": "cuid from Auth"
